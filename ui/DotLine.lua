@@ -1,0 +1,3 @@
+local DotLine = {}
+
+return DotLine
