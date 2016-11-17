@@ -1,3 +1,0 @@
-local DotLine = {}
-
-return DotLine

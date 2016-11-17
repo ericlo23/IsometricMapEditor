@@ -73,6 +73,8 @@ Layer.new = function()
 				TileInfo.width/2, 0, 0, TileInfo.height/2 -- right bottom
 			)
 		end
+		l:setStrokeColor( 0.3, 0.3, 0.3	 )
+		l.strokeWidth = 2
 		g:insert(l)
 		g:insert(c)
 		t:insert(g)

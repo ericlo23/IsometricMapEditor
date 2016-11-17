@@ -25,7 +25,6 @@ function scene:show( event )
 
     if ( phase == "will" ) then
 		print("building")
-       	--print("display size: "..display.contentWidth.."x"..display.contentHeight)
 
 		local sheetName = "RoadtilesNova"
 		local sheetInfo = require("tiles.Wrapped"..sheetName)

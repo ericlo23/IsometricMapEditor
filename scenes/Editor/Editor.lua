@@ -1,18 +1,12 @@
 local composer = require("composer")
 local widget = require("widget")
+
+local ControlTable = require("scenes.Editor.ControlTable")
+local DemoContainer = require("scenes.Editor.DemoContainer")
 local Layer = require("Layer")
 local GameConfig = require("GameConfig")
 local LinearGroup = require("ui.LinearGroup")
-
-local function onOrientationChange( event )
-    local currentOrientation = event.type
-    print( "Current orientation: " .. currentOrientation )
-	if(currentOrientation == "portrait" or currentOrientation == "portraitUpsideDown") then
-		print("Change to Demo Mode")
-		composer.gotoScene("scenes.Demo")
-	end
-end
-Runtime:addEventListener( "orientation", onOrientationChange )
+local GridContainer = require("ui.GridContainer")
 
 local scene = composer.newScene()
 
@@ -21,8 +15,8 @@ function scene:create( event )
     local sceneGroup = self.view
 
 end
-	
-function scene:setUniversalGroup()
+
+function scene:initialLayout()
 	local sceneGroup = self.view
 	self.universalGroup = LinearGroup.new()
 	self.universalGroup.x = display.contentCenterX
@@ -30,39 +24,45 @@ function scene:setUniversalGroup()
 	
 	self.attrTable = widget.newTableView({
 		id="attr_table",
-		x = 0,
-		y = 0,
-		width = display.contentWidth*4/16,
-		height = display.contentHeight
+		width = GameConfig.attrTableWidth,
+		height = GameConfig.attrTableHeight
 	})
 	
-	self.demoContainer = display.newContainer(display.contentWidth*8/16, display.contentHeight)
-	self.demoContainer.x = 0
-	self.demoContainer.y = 0
-	local ground = Layer.new()
-	ground.x = 0
-	ground.y = 0
-	ground:scale(0.3, 0.3)
-	self.demoContainer:insert(ground)
+	self.demoContainer = DemoContainer.new(GameConfig.demoContainerWidth, GameConfig.demoContainerHeight)
 	
-	self.tileTable = widget.newTableView({
-		id="tile_table",
-		x = 0,
-		y = 0,
-		width = display.contentWidth*4/16,
-		height = display.contentHeight
-	})
+	self.controlTable = GridContainer.new(
+		GameConfig.controlTableWidth,
+		GameConfig.controlTableHeight,
+		1,
+		5
+	)
+	
+	self.tileTable = GridContainer.new(
+		GameConfig.tileTableWidth, 
+		GameConfig.tileTableHeight, 
+		GameConfig.tileRows,
+		GameConfig.tileCols
+	)
 	
 	-- left part
 	self.leftGroup = display.newGroup()
+	self.attrTable.x = 0
+	self.attrTable.y = 0
 	self.leftGroup:insert(self.attrTable)
 	
 	-- middle part
 	self.middleGroup = display.newGroup()
+	self.demoContainer.x = 0
+	self.demoContainer.y = 0
+	self.controlTable.x = 0
+	self.controlTable.y = (GameConfig.contentHeight-GameConfig.controlTableHeight)/2
 	self.middleGroup:insert(self.demoContainer)
+	self.middleGroup:insert(self.controlTable)
 	
 	-- right part
 	self.rightGroup = display.newGroup()
+	self.tileTable.x = 0
+	self.tileTable.y = (GameConfig.contentHeight-GameConfig.tileTableHeight)
 	self.rightGroup:insert(self.tileTable)
 	
 	self.universalGroup:insert(self.leftGroup)
@@ -79,7 +79,7 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
-		self:setUniversalGroup()
+		self:initialLayout()
 		
     elseif ( phase == "did" ) then
 
@@ -108,5 +108,16 @@ scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
+
+local function onOrientationChange( event )
+    local currentOrientation = event.type
+    print( "Current orientation: " .. currentOrientation )
+	if(currentOrientation == "portrait" or currentOrientation == "portraitUpsideDown") then
+		print("Change to Demo Mode")
+		composer.gotoScene("scenes.Demo")
+	end
+end
+
+Runtime:addEventListener( "orientation", onOrientationChange )
 
 return scene
