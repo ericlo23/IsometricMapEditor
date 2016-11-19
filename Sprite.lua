@@ -110,14 +110,14 @@ M.removeSheet = function()
     M.sheetInfos[name] = nil
 end
 
---set default sprite
-M.addSheet("default", "sprites/default", "sprites.default")
-
-M.sheetInfo = M.sheetInfos.default
-M.myImageSheet = M.imageSheets.default
-
---set default method
-M.new = M.default.new
-M.newAnimation = M.default.newAnimation
+M.setDefaultSrpite = function(img, sprite)
+    --set default sprite
+    M.addSheet("default", img, sprite)
+    M.sheetInfo = M.sheetInfos.default
+    M.myImageSheet = M.imageSheets.default
+    --set default method
+    M.new = M.default.new
+    M.newAnimation = M.default.newAnimation
+end
 
 return M
