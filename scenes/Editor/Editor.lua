@@ -1,8 +1,9 @@
 local composer = require("composer")
 local widget = require("widget")
 
-local ControlTable = require("scenes.Editor.ControlTable")
 local DemoContainer = require("scenes.Editor.DemoContainer")
+local ControlBar = require("scenes.Editor.ControlBar")
+
 local Layer = require("Layer")
 local GameConfig = require("GameConfig")
 local LinearGroup = require("ui.LinearGroup")
@@ -30,12 +31,7 @@ function scene:initialLayout()
 	
 	self.demoContainer = DemoContainer.new(GameConfig.demoContainerWidth, GameConfig.demoContainerHeight)
 	
-	self.controlTable = GridContainer.new(
-		GameConfig.controlTableWidth,
-		GameConfig.controlTableHeight,
-		1,
-		5
-	)
+	self.controlBar = ControlBar.new(self.demoContainer, GameConfig.controlBarWidth, GameConfig.controlBarHeight)
 	
 	self.tileTable = GridContainer.new(
 		GameConfig.tileTableWidth, 
@@ -54,10 +50,10 @@ function scene:initialLayout()
 	self.middleGroup = display.newGroup()
 	self.demoContainer.x = 0
 	self.demoContainer.y = 0
-	self.controlTable.x = 0
-	self.controlTable.y = (GameConfig.contentHeight-GameConfig.controlTableHeight)/2
+	self.controlBar.x = 0
+	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.middleGroup:insert(self.demoContainer)
-	self.middleGroup:insert(self.controlTable)
+	self.middleGroup:insert(self.controlBar)
 	
 	-- right part
 	self.rightGroup = display.newGroup()
@@ -119,5 +115,21 @@ local function onOrientationChange( event )
 end
 
 Runtime:addEventListener( "orientation", onOrientationChange )
+
+local preScrollY = nil
+local function onMouseEvent(event)
+	if preScrollY then
+		if event.scrollY > preScrollY then
+			print("up")
+		
+		elseif event.scrollY < preScrollY then 
+			print("down")
+		end
+	end
+	preScrollY = event.scrollY
+	
+end
+
+Runtime:addEventListener("mouse", onMouseEvent)
 
 return scene

@@ -13,25 +13,27 @@ config.imageSuffix = {
 
 config.scaleFactor =  config.contentHeight / config.basicHeight
 
+config.fontSize = 14
+
 -- Editor layout size
 config.attrTableWidth = config.contentWidth*4/16
 config.attrTableHeight = config.contentHeight
 
-config.controlTableWidth = config.contentWidth*8/16
-config.controlTableHeight = 30
+config.controlBarWidth = config.contentWidth*8/16
+config.controlBarHeight = 30
 config.controlBtnHeight = 24
 
 config.demoContainerWidth = config.contentWidth*8/16
-config.demoContainerHeight = config.contentHeight-config.controlTableHeight
+config.demoContainerHeight = config.contentHeight-config.controlBarHeight
 
 config.tileTableWidth = config.contentWidth*4/16
 config.tileTableHeight = config.contentHeight
 
 -- Layer
 config.layerSize = 8
-config.layerScale = 0.4
-config.layOffset = 30
-config.gapHeight = 200
+config.layerScale = 0.3
+config.layOffset = 50
+config.gapHeight = 200/0.3
 
 -- Tile table
 --config.numTiles = 96

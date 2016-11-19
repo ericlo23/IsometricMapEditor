@@ -9,7 +9,7 @@ GridContainer.new = function(maxW, maxH, rows, cols, options)
 	g.numCols = cols
 	g.gapSize = options and options.gapSize or 0
 
-	g:insert(display.newRect(0, 0, maxW, maxH))
+	--g:insert(display.newRect(0, 0, maxW, maxH))
 	
 	local gridHeight = (g.maxHeight-g.gapSize*(g.numRows-1))/g.numRows
 	local gridWidth = (g.maxWidth-g.gapSize*(g.numCols-1))/g.numCols
