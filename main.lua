@@ -8,3 +8,4 @@ Sprite.setDefaultSrpite("sprites/characters.png", "sprites.characters")
 
 --composer.gotoScene("scenes.Editor.Editor")
 --composer.gotoScene("scenes.Demo")
+composer.gotoScene("scenes.characterdemo")
