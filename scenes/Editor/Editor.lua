@@ -22,30 +22,30 @@ function scene:initialLayout()
 	self.universalGroup = LinearGroup.new()
 	self.universalGroup.x = display.contentCenterX
 	self.universalGroup.y = display.contentCenterY
-	
+
 	self.attrTable = widget.newTableView({
 		id="attr_table",
 		width = GameConfig.attrTableWidth,
 		height = GameConfig.attrTableHeight
 	})
-	
+
 	self.demoContainer = DemoContainer.new(GameConfig.demoContainerWidth, GameConfig.demoContainerHeight)
-	
+
 	self.controlBar = ControlBar.new(self.demoContainer, GameConfig.controlBarWidth, GameConfig.controlBarHeight)
-	
+
 	self.tileTable = GridContainer.new(
-		GameConfig.tileTableWidth, 
-		GameConfig.tileTableHeight, 
+		GameConfig.tileTableWidth,
+		GameConfig.tileTableHeight,
 		GameConfig.tileRows,
 		GameConfig.tileCols
 	)
-	
+
 	-- left part
 	self.leftGroup = display.newGroup()
 	self.attrTable.x = 0
 	self.attrTable.y = 0
 	self.leftGroup:insert(self.attrTable)
-	
+
 	-- middle part
 	self.middleGroup = display.newGroup()
 	self.demoContainer.x = 0
@@ -54,18 +54,18 @@ function scene:initialLayout()
 	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.middleGroup:insert(self.demoContainer)
 	self.middleGroup:insert(self.controlBar)
-	
+
 	-- right part
 	self.rightGroup = display.newGroup()
 	self.tileTable.x = 0
 	self.tileTable.y = (GameConfig.contentHeight-GameConfig.tileTableHeight)
 	self.rightGroup:insert(self.tileTable)
-	
+
 	self.universalGroup:insert(self.leftGroup)
 	self.universalGroup:insert(self.middleGroup)
 	self.universalGroup:insert(self.rightGroup)
 	self.universalGroup:resize()
-	
+
 	sceneGroup:insert(self.universalGroup)
 end
 
@@ -76,7 +76,7 @@ function scene:show( event )
 
     if ( phase == "will" ) then
 		self:initialLayout()
-		
+
     elseif ( phase == "did" ) then
 
     end
@@ -113,23 +113,15 @@ local function onOrientationChange( event )
 		composer.gotoScene("scenes.Demo")
 	end
 end
-
 Runtime:addEventListener( "orientation", onOrientationChange )
 
-local preScrollY = nil
 local function onMouseEvent(event)
-	if preScrollY then
-		if event.scrollY > preScrollY then
-			print("up")
-		
-		elseif event.scrollY < preScrollY then 
-			print("down")
-		end
+	if event.scrollY > 0 then
+        scene.demoContainer:zoomOut()
+	elseif event.scrollY < 0 then
+        scene.demoContainer:zoomIn()
 	end
-	preScrollY = event.scrollY
-	
 end
-
 Runtime:addEventListener("mouse", onMouseEvent)
 
 return scene

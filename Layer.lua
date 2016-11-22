@@ -3,7 +3,7 @@ local GameConfig = require("GameConfig")
 
 local Layer = {}
 
---[[ 
+--[[
 m: numbers
 n: numbers
 
@@ -17,15 +17,24 @@ n: numbers
 	  \    /       |
 	   \  /        |
 		\/         |
-		
+
 	--size---
 ]]
 
-Layer.new = function()
+Layer.new = function(text)
 	local layer = display.newGroup()
 
 	layer.tiles = {}
-	
+
+	local title = display.newText({
+		text = text,
+		font = native.systemFont,
+		fontSize = 50
+	})
+	title.fill = {0.4, 0.4, 0.4}
+
+	layer:insert(title)
+
 	function layer:setDefaultAt(i, j)
 		local t = self.tiles[i][j]
 		if(t.numChildren ~= 0) then
@@ -37,18 +46,10 @@ Layer.new = function()
 		local c = display.newCircle(0, 0, 2)
 		c.x = 0
 		c.y = 0
-		
-		--[[
-		local l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
-				-TileInfo.width/2, 0, 0, -TileInfo.height/2, -- left top
-				TileInfo.width/2, 0, 0, -TileInfo.height/2 -- right top
-			)
-		]]
+
 		local l = nil
 		if j == 1 and i == GameConfig.layerSize then
-		
+
 			l = display.newLine(
 				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
 				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
@@ -79,7 +80,7 @@ Layer.new = function()
 		g:insert(c)
 		t:insert(g)
 	end
-	
+
 	function layer:cleanAt(i, j)
 		local t = self.tiles[i][j]
 		if(t.numChildren == 0) then
@@ -89,7 +90,7 @@ Layer.new = function()
 			t:remove(1)
 		end
 	end
-	
+
 	function layer:setTileAt(o, i, j)
 		local t = self.tiles[i][j]
 		if(t.numChildren ~= 0) then
@@ -99,7 +100,7 @@ Layer.new = function()
 		o.y = 0
 		t:insert(o)
 	end
-	
+
 	for i = 1, GameConfig.layerSize do
 		layer.tiles[i] = {}
 		for j = 1, GameConfig.layerSize do
