@@ -38,14 +38,6 @@ Layer.new = function()
 		c.x = 0
 		c.y = 0
 		
-		--[[
-		local l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
-				-TileInfo.width/2, 0, 0, -TileInfo.height/2, -- left top
-				TileInfo.width/2, 0, 0, -TileInfo.height/2 -- right top
-			)
-		]]
 		local l = nil
 		if j == 1 and i == GameConfig.layerSize then
 		

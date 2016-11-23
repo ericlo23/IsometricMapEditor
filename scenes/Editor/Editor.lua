@@ -4,7 +4,9 @@ local widget = require("widget")
 local DemoContainer = require("scenes.Editor.DemoContainer")
 local ControlBar = require("scenes.Editor.ControlBar")
 
-local Layer = require("Layer")
+local TileBox = require("scenes.Editor.TileBox")
+
+local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 local LinearGroup = require("ui.LinearGroup")
 local GridContainer = require("ui.GridContainer")
@@ -22,30 +24,36 @@ function scene:initialLayout()
 	self.universalGroup = LinearGroup.new()
 	self.universalGroup.x = display.contentCenterX
 	self.universalGroup.y = display.contentCenterY
-	
+
 	self.attrTable = widget.newTableView({
 		id="attr_table",
 		width = GameConfig.attrTableWidth,
 		height = GameConfig.attrTableHeight
 	})
-	
-	self.demoContainer = DemoContainer.new(GameConfig.demoContainerWidth, GameConfig.demoContainerHeight)
-	
-	self.controlBar = ControlBar.new(self.demoContainer, GameConfig.controlBarWidth, GameConfig.controlBarHeight)
-	
-	self.tileTable = GridContainer.new(
-		GameConfig.tileTableWidth, 
-		GameConfig.tileTableHeight, 
-		GameConfig.tileRows,
-		GameConfig.tileCols
+
+	self.demoContainer = DemoContainer.new(
+        GameConfig.demoContainerWidth,
+        GameConfig.demoContainerHeight
+    )
+
+	self.controlBar = ControlBar.new(
+        self.demoContainer,
+        GameConfig.controlBarWidth,
+        GameConfig.controlBarHeight
+    )
+
+	self.tileBox = TileBox.new(
+		GameConfig.tileBoxWidth,
+		GameConfig.tileBoxHeight,
+		TileBox.LAYOUT_VERTICAL
 	)
-	
+
 	-- left part
 	self.leftGroup = display.newGroup()
 	self.attrTable.x = 0
 	self.attrTable.y = 0
 	self.leftGroup:insert(self.attrTable)
-	
+
 	-- middle part
 	self.middleGroup = display.newGroup()
 	self.demoContainer.x = 0
@@ -54,18 +62,18 @@ function scene:initialLayout()
 	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.middleGroup:insert(self.demoContainer)
 	self.middleGroup:insert(self.controlBar)
-	
+
 	-- right part
 	self.rightGroup = display.newGroup()
-	self.tileTable.x = 0
-	self.tileTable.y = (GameConfig.contentHeight-GameConfig.tileTableHeight)
-	self.rightGroup:insert(self.tileTable)
-	
+	self.tileBox.x = 0
+	self.tileBox.y = (GameConfig.contentHeight-GameConfig.tileBoxHeight)
+	self.rightGroup:insert(self.tileBox)
+
 	self.universalGroup:insert(self.leftGroup)
 	self.universalGroup:insert(self.middleGroup)
 	self.universalGroup:insert(self.rightGroup)
 	self.universalGroup:resize()
-	
+
 	sceneGroup:insert(self.universalGroup)
 end
 
@@ -76,7 +84,7 @@ function scene:show( event )
 
     if ( phase == "will" ) then
 		self:initialLayout()
-		
+
     elseif ( phase == "did" ) then
 
     end
@@ -121,13 +129,13 @@ local function onMouseEvent(event)
 	if preScrollY then
 		if event.scrollY > preScrollY then
 			print("up")
-		
-		elseif event.scrollY < preScrollY then 
+
+		elseif event.scrollY < preScrollY then
 			print("down")
 		end
 	end
 	preScrollY = event.scrollY
-	
+
 end
 
 Runtime:addEventListener("mouse", onMouseEvent)

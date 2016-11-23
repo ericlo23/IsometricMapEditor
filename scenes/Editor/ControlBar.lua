@@ -7,13 +7,13 @@ local GameConfig = require("GameConfig")
 local ControlBar = {}
 
 ControlBar.new = function(demoContainer, width, height)
-	local bar = GridContainer.new(
-		width,
-		height,
-		1,
-		5
-	)
-	
+	local bar = GridContainer.new({
+		maxW = width,
+		maxH = height,
+		rows = 1,
+		cols = 5
+	})
+
 	bar.btnUp = widget.newButton({
 		label="UP",
 		fontSize = 12,
@@ -59,13 +59,13 @@ ControlBar.new = function(demoContainer, width, height)
 				end
 			end
 	})
-	
+
 	bar:insertAt(bar.btnUp, 1, 1)
 	bar:insertAt(bar.btnZoomOut, 1, 2)
 	bar:insertAt(bar.btnReset, 1, 3)
 	bar:insertAt(bar.btnZoomIn, 1, 4)
 	bar:insertAt(bar.btnDown, 1, 5)
-	
+
 	return bar
 end
 

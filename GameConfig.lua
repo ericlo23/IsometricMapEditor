@@ -26,18 +26,17 @@ config.controlBtnHeight = 24
 config.demoContainerWidth = config.contentWidth*8/16
 config.demoContainerHeight = config.contentHeight-config.controlBarHeight
 
-config.tileTableWidth = config.contentWidth*4/16
-config.tileTableHeight = config.contentHeight
+config.tileBoxWidth = config.contentWidth*4/16
+config.tileBoxHeight = config.contentHeight
 
 -- Layer
 config.layerSize = 8
 config.layerScale = 0.3
 config.layOffset = 50
-config.gapHeight = 200/0.3
+config.layerDistance = 200/0.3
 
--- Tile table
---config.numTiles = 96
-config.tileRows = 8
-config.tileCols = 8
+-- Tile box
+config.gridWidth = 15
+config.gridHeight = 15
 
 return config
