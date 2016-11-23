@@ -35,30 +35,6 @@ DemoContainer.new = function(w, h)
 	container.layerGroup = layerGroup
 	container:insert(layerGroup)
 
-	function container:zoomIn()
-		print("zoom in")
-		self.currentScale = self.currentScale + GameConfig.previewScaleStep
-		self.layerGroup.xScale = self.currentScale
-		self.layerGroup.yScale = self.currentScale
-		self:changeCenter(self.currentLayer)
-	end
-
-	function container:zoomOut()
-		print("zoom out")
-		print("<--")
-		print(self.currentScale)
-		print(GameConfig.previewScaleStep)
-		print(self.currentScale > GameConfig.previewScaleStep)
-		if self.currentScale > GameConfig.previewScaleStep then
-			self.currentScale = self.currentScale - GameConfig.previewScaleStep
-			self.layerGroup.xScale = self.currentScale
-			self.layerGroup.yScale = self.currentScale
-			self:changeCenter(self.currentLayer)
-			print("zoom out")
-		end
-		print("-->")
-	end
-
 	function container:changeCenter(layerIdx)
 		if layerIdx == DemoContainer.LAYER_SKY then
 			self.layerGroup.x = self.layerGroup.sky.x
@@ -72,6 +48,24 @@ DemoContainer.new = function(w, h)
 		end
 		self.layerGroup.x = -self.layerGroup.x * self.currentScale + GameConfig.previewOffsetX
 		self.layerGroup.y = -self.layerGroup.y * self.currentScale + GameConfig.previewOffsetY
+	end
+
+	function container:zoomIn()
+		print("zoom in")
+		self.currentScale = self.currentScale + GameConfig.previewScaleStep
+		self.layerGroup.xScale = self.currentScale
+		self.layerGroup.yScale = self.currentScale
+		self:changeCenter(self.currentLayer)
+	end
+
+	function container:zoomOut()
+		print("zoom out")
+		if math.floor(self.currentScale*100) > math.floor(GameConfig.previewScaleStep*100) then
+			self.currentScale = self.currentScale - GameConfig.previewScaleStep
+			self.layerGroup.xScale = self.currentScale
+			self.layerGroup.yScale = self.currentScale
+			self:changeCenter(self.currentLayer)
+		end
 	end
 
 	function container:up()
