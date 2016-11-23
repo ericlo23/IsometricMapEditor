@@ -1,7 +1,7 @@
 local composer = require("composer")
 local widget = require("widget")
 
-local DemoContainer = require("scenes.Editor.DemoContainer")
+local Preview = require("scenes.Editor.Preview")
 local ControlBar = require("scenes.Editor.ControlBar")
 
 local TileBox = require("scenes.Editor.TileBox")
@@ -31,13 +31,13 @@ function scene:initialLayout()
 		height = GameConfig.attrTableHeight
 	})
 
-	self.demoContainer = DemoContainer.new(
-        GameConfig.demoContainerWidth,
-        GameConfig.demoContainerHeight
+	self.preview = Preview.new(
+        GameConfig.previewWidth,
+        GameConfig.previewHeight
     )
 
 	self.controlBar = ControlBar.new(
-        self.demoContainer,
+        self.preview,
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight
     )
@@ -56,17 +56,17 @@ function scene:initialLayout()
 
 	-- middle part
 	self.middleGroup = display.newGroup()
-	self.demoContainer.x = 0
-	self.demoContainer.y = 0
+	self.preview.x = 0
+	self.preview.y = 0
 	self.controlBar.x = 0
 	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
-	self.middleGroup:insert(self.demoContainer)
+	self.middleGroup:insert(self.preview)
 	self.middleGroup:insert(self.controlBar)
 
 	-- right part
 	self.rightGroup = display.newGroup()
 	self.tileBox.x = 0
-	self.tileBox.y = (GameConfig.contentHeight-GameConfig.tileBoxHeight)
+	self.tileBox.y = -(GameConfig.contentHeight-GameConfig.tileBoxHeight)/2
 	self.rightGroup:insert(self.tileBox)
 
 	self.universalGroup:insert(self.leftGroup)
@@ -125,9 +125,9 @@ Runtime:addEventListener( "orientation", onOrientationChange )
 
 local function onMouseEvent(event)
 	if event.scrollY > 0 then
-        scene.demoContainer:zoomOut()
+        scene.preview:zoomOut()
 	elseif event.scrollY < 0 then
-        scene.demoContainer:zoomIn()
+        scene.preview:zoomIn()
 	end
 end
 Runtime:addEventListener("mouse", onMouseEvent)

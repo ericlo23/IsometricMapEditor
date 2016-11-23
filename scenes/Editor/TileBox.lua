@@ -13,17 +13,21 @@ TileBox.LAYOUT_HORIZONTAL = 0
 TileBox.LAYOUT_VERTICAL = 1
 
 TileBox.new = function(maxW, maxH, layout, options)
-    local scrollView = widget.newScrollView({
-        width = maxW,
-        height = maxH
-    })
-
     local gapSize = options and options.gapSize or 0
-
-    if layout ~= TileBox.LAYOUT_VERTICAL and layout ~= TileBox.LAYOUT_HORIZONTAL then
+    local options = {
+        width = maxW,
+        height = maxH,
+    }
+    if layout == TileBox.LAYOUT_VERTICAL then
+        options["horizontalScrollDisabled"] = true
+    elseif layout == TileBox.LAYOUT_HORIZONTAL then
+        options["verticalScrollDisabled"] = true
+    else
         print("layout is invalid")
         return nil
     end
+
+    local scrollView = widget.newScrollView(options)
 
     local tiles = {}
     local idx = 0
@@ -32,9 +36,8 @@ TileBox.new = function(maxW, maxH, layout, options)
         for i = 1, #(isotiles.sheet.frames) do
             idx = idx + 1
             --tiles[idx] = Sprite["isotiles"].new(tostring(i))
+
             local gg = display.newGroup()
-
-
             local rect = display.newRect( 0, 0, GameConfig.gridWidth, GameConfig.gridHeight )
             rect.fill = {1, 0, 0}
             rect.stroke = {0, 1, 0}
@@ -46,8 +49,6 @@ TileBox.new = function(maxW, maxH, layout, options)
             } )
             gg:insert(rect)
             gg:insert(t)
-
-
             tiles[idx] = gg
         end
     end
@@ -77,18 +78,14 @@ TileBox.new = function(maxW, maxH, layout, options)
     end
 
     for i = 1, idx do
-        local x = i%numCols
-        if x == 0 then
-            x = numCols
-        end
-        --container:insertAt(rect, math.floor(i/numCols)+1, x)
-        print((math.floor(i/numCols)+1)..","..x)
-        container:insertAt(tiles[i], math.floor(i/numCols)+1, x)
+        local x = math.floor((i-1)/numCols)+1
+        local y = i-(x-1)*numCols
+        container:insertAt(tiles[i], x, y)
     end
 
-    container.x = 0
-    container.y = 0
-    --scrollView:insert(container)
+    container.x = maxW/2
+    container.y = container.realH/2
+    scrollView:insert(container)
 
     return scrollView
 end

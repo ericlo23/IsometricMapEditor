@@ -1,13 +1,13 @@
 local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 
-local DemoContainer = {}
+local Preview = {}
 
-DemoContainer.LAYER_SKY = 1
-DemoContainer.LAYER_GROUND = 0
-DemoContainer.LAYER_UNDERGROUND = -1
+Preview.LAYER_SKY = 1
+Preview.LAYER_GROUND = 0
+Preview.LAYER_UNDERGROUND = -1
 
-DemoContainer.new = function(w, h)
+Preview.new = function(w, h)
 	local container = display.newContainer(w, h)
 
 	local layerGroup = display.newGroup()
@@ -35,13 +35,13 @@ DemoContainer.new = function(w, h)
 	container:insert(layerGroup)
 
 	function container:changeCenter(layerIdx)
-		if layerIdx == DemoContainer.LAYER_SKY then
+		if layerIdx == Preview.LAYER_SKY then
 			self.layerGroup.x = self.layerGroup.sky.x
 			self.layerGroup.y = self.layerGroup.sky.y
-		elseif layerIdx == DemoContainer.LAYER_GROUND then
+		elseif layerIdx == Preview.LAYER_GROUND then
 			self.layerGroup.x = self.layerGroup.ground.x
 			self.layerGroup.y = self.layerGroup.ground.y
-		elseif layerIdx == DemoContainer.LAYER_UNDERGROUND then
+		elseif layerIdx == Preview.LAYER_UNDERGROUND then
 			self.layerGroup.x = self.layerGroup.underground.x
 			self.layerGroup.y = self.layerGroup.underground.y
 		end
@@ -69,7 +69,7 @@ DemoContainer.new = function(w, h)
 
 	function container:up()
 		print("up")
-		if self.currentLayer < DemoContainer.LAYER_SKY then
+		if self.currentLayer < Preview.LAYER_SKY then
 			self.currentLayer = self.currentLayer + 1
 			self:changeCenter(self.currentLayer)
 		end
@@ -77,7 +77,7 @@ DemoContainer.new = function(w, h)
 
 	function container:down()
 		print("down")
-		if self.currentLayer > DemoContainer.LAYER_UNDERGROUND then
+		if self.currentLayer > Preview.LAYER_UNDERGROUND then
 			self.currentLayer = self.currentLayer - 1
 			self:changeCenter(self.currentLayer)
 		end
@@ -86,7 +86,7 @@ DemoContainer.new = function(w, h)
 	function container:reset()
 		print("reset")
 		self.currentScale = GameConfig.previewScale
-		self.currentLayer = DemoContainer.LAYER_GROUND
+		self.currentLayer = Preview.LAYER_GROUND
 		self:changeCenter(self.currentLayer)
 		self.layerGroup.xScale = GameConfig.previewScale
 		self.layerGroup.yScale = GameConfig.previewScale
@@ -98,4 +98,4 @@ DemoContainer.new = function(w, h)
 	return container
 end
 
-return DemoContainer
+return Preview

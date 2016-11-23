@@ -6,7 +6,7 @@ local GameConfig = require("GameConfig")
 
 local ControlBar = {}
 
-ControlBar.new = function(demoContainer, width, height)
+ControlBar.new = function(preview, width, height)
 
 	local bar = GridContainer.new({
 		maxW = width,
@@ -20,7 +20,7 @@ ControlBar.new = function(demoContainer, width, height)
 		fontSize = 12,
 		onEvent = function(event)
 				if event.phase == "ended" then
-					demoContainer:up()
+					preview:up()
 				end
 		end
 	})
@@ -29,7 +29,7 @@ ControlBar.new = function(demoContainer, width, height)
 		fontSize = 10,
 		onEvent = function(event)
 				if event.phase == "ended" then
-					demoContainer:zoomOut()
+					preview:zoomOut()
 				end
 			end
 	})
@@ -38,7 +38,7 @@ ControlBar.new = function(demoContainer, width, height)
 		fontSize = 12,
 		onEvent = function(event)
 				if event.phase == "ended" then
-					demoContainer:reset()
+					preview:reset()
 				end
 			end
 	})
@@ -47,7 +47,7 @@ ControlBar.new = function(demoContainer, width, height)
 		fontSize = 10,
 		onEvent = function(event)
 				if event.phase == "ended" then
-					demoContainer:zoomIn()
+					preview:zoomIn()
 				end
 			end
 	})
@@ -56,7 +56,7 @@ ControlBar.new = function(demoContainer, width, height)
 		fontSize = 12,
 		onEvent = function(event)
 				if event.phase == "ended" then
-					demoContainer:down()
+					preview:down()
 				end
 			end
 	})

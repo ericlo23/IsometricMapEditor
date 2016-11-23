@@ -1,7 +1,5 @@
 local json = require("json")
 
-local GameConfig = require("GameConfig")
-
 local GridContainer = {}
 
 --[[
@@ -64,6 +62,9 @@ GridContainer.new = function(options)
 	else
 		return nil
 	end
+
+	g.realW = g.numCols*(g.gridW+g.gapSize)-g.gapSize
+	g.realH = g.numRows*(g.gridH+g.gapSize)-g.gapSize
 
 	--print (json.prettify( g ))
 

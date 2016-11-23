@@ -23,26 +23,26 @@ config.controlBarWidth = config.contentWidth*8/16
 config.controlBarHeight = 30
 config.controlBtnHeight = 24
 
-config.demoContainerWidth = config.contentWidth*8/16
-config.demoContainerHeight = config.contentHeight-config.controlBarHeight
+config.previewWidth = config.contentWidth*8/16
+config.previewHeight = config.contentHeight-config.controlBarHeight
 
 config.tileBoxWidth = config.contentWidth*4/16
-config.tileBoxHeight = config.contentHeight
+config.tileBoxHeight = config.contentHeight/2
 
 -- Preview
 config.previewScale = 0.3
 config.previewScaleStep = 0.05
 config.previewOffsetX = 0
-config.previewOffsetY = 50
+config.previewOffsetY = 0
 
 -- Layer
 config.layerSize = 8
 config.layerScale = 0.3
 config.layOffset = 50
-config.layerDistance = 200/0.3
+config.layerDistance = 600
 
 -- Tile box
-config.gridWidth = 15
-config.gridHeight = 15
+config.gridWidth = 20
+config.gridHeight = 20
 
 return config
