@@ -1,5 +1,4 @@
-local Layer = require("Layer")
-
+local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 
 local DemoContainer = {}
@@ -16,7 +15,7 @@ DemoContainer.new = function(w, h)
 	-- Layers
 	local sky = Layer.new("SKY")
 	sky.x = 0
-	sky.y = -GameConfig.layerGap
+	sky.y = -GameConfig.layerDistance
 	layerGroup:insert(sky)
 	layerGroup.sky = sky
 
@@ -28,7 +27,7 @@ DemoContainer.new = function(w, h)
 
 	local underground = Layer.new("UNDERGROUND")
 	underground.x = 0
-	underground.y = GameConfig.layerGap
+	underground.y = GameConfig.layerDistance
 	layerGroup:insert(underground)
 	layerGroup.underground = underground
 

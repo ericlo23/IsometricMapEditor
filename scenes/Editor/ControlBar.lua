@@ -7,12 +7,13 @@ local GameConfig = require("GameConfig")
 local ControlBar = {}
 
 ControlBar.new = function(demoContainer, width, height)
-	local bar = GridContainer.new(
-		width,
-		height,
-		1,
-		5
-	)
+
+	local bar = GridContainer.new({
+		maxW = width,
+		maxH = height,
+		rows = 1,
+		cols = 5
+	})
 
 	bar.btnUp = widget.newButton({
 		label="UP",
