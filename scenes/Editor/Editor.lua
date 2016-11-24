@@ -45,7 +45,10 @@ function scene:initialLayout()
 	self.tileBox = TileBox.new(
 		GameConfig.tileBoxWidth,
 		GameConfig.tileBoxHeight,
-		TileBox.LAYOUT_VERTICAL
+		TileBox.LAYOUT_VERTICAL,
+        {
+            gapSize = 3
+        }
 	)
 
 	-- left part
@@ -57,7 +60,7 @@ function scene:initialLayout()
 	-- middle part
 	self.middleGroup = display.newGroup()
 	self.preview.x = 0
-	self.preview.y = 0
+	self.preview.y = -(GameConfig.contentHeight-GameConfig.previewHeight)/2
 	self.controlBar.x = 0
 	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.middleGroup:insert(self.preview)

@@ -12,60 +12,85 @@ ControlBar.new = function(preview, width, height)
 		maxW = width,
 		maxH = height,
 		rows = 1,
-		cols = 5
+		cols = 3,
+		gapSize = 1
 	})
 
 	bar.btnUp = widget.newButton({
 		label="UP",
-		fontSize = 12,
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
 		onEvent = function(event)
 				if event.phase == "ended" then
 					preview:up()
 				end
-		end
+		end,
+		shape = "roundedRect",
+		width = bar.gridW,
+		height = GameConfig.controlBtnHeight,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
+	bar.btnDown = widget.newButton({
+		label="DOWN",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" then
+				preview:down()
+			end
+		end,
+		shape = "roundedRect",
+		width = bar.gridW,
+		height = GameConfig.controlBtnHeight,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
+	bar.btnReset = widget.newButton({
+		label="RESET",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" then
+				preview:reset()
+			end
+		end,
+		shape = "roundedRect",
+		width = bar.gridW,
+		height = GameConfig.controlBtnHeight,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
+	--[[
+	bar.btnZoomIn = widget.newButton({
+		label="ZOOM\n   IN",
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" then
+				preview:zoomIn()
+			end
+		end,
+		shape = "roundedRect",
+		width = bar.gridW,
+		height = bar.gridH,
+		fillColor = { default={1,0,0,0.5}, over={1,0.1,0.7,0.4} },
 	})
 	bar.btnZoomOut = widget.newButton({
 		label="ZOOM\n  OUT",
 		fontSize = 10,
 		onEvent = function(event)
-				if event.phase == "ended" then
-					preview:zoomOut()
-				end
+			if event.phase == "ended" then
+				preview:zoomOut()
 			end
+		end,
+		shape = "roundedRect",
+		width = bar.gridW,
+		height = bar.gridH,
+		fillColor = { default={1,0,0,0.5}, over={1,0.1,0.7,0.4} },
 	})
-	bar.btnReset = widget.newButton({
-		label="RESET",
-		fontSize = 12,
-		onEvent = function(event)
-				if event.phase == "ended" then
-					preview:reset()
-				end
-			end
-	})
-	bar.btnZoomIn = widget.newButton({
-		label="ZOOM\n   IN",
-		fontSize = 10,
-		onEvent = function(event)
-				if event.phase == "ended" then
-					preview:zoomIn()
-				end
-			end
-	})
-	bar.btnDown = widget.newButton({
-		label="DOWN",
-		fontSize = 12,
-		onEvent = function(event)
-				if event.phase == "ended" then
-					preview:down()
-				end
-			end
-	})
-
+	]]
 	bar:insertAt(bar.btnDown, 1, 1)
-	bar:insertAt(bar.btnZoomOut, 1, 2)
-	bar:insertAt(bar.btnReset, 1, 3)
-	bar:insertAt(bar.btnZoomIn, 1, 4)
-	bar:insertAt(bar.btnUp, 1, 5)
+	--bar:insertAt(bar.btnZoomOut, 1, 2)
+	bar:insertAt(bar.btnReset, 1, 2)
+	--bar:insertAt(bar.btnZoomIn, 1, 4)
+	bar:insertAt(bar.btnUp, 1, 3)
 
 	return bar
 end

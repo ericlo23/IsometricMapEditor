@@ -66,17 +66,27 @@ GridContainer.new = function(options)
 	g.realW = g.numCols*(g.gridW+g.gapSize)-g.gapSize
 	g.realH = g.numRows*(g.gridH+g.gapSize)-g.gapSize
 
-	--print (json.prettify( g ))
+	print(json.prettify( g ))
 
+	--[[
+	local r = display.newRect( 0, 0, g.realW, g.realH )
+	g:insert(r)
+	]]
 	g.tab = {}
 	for i = 1, g.numRows do
 		g.tab[i] = {}
 		for j = 1, g.numCols do
 			g.tab[i][j] = display.newContainer(g.gridW, g.gridH)
 			local t = g.tab[i][j]
-
-			t.x = (g.gridW+g.gapSize) * (j-1) - g.maxW/2 + (g.gridW+g.gapSize)/2
-			t.y = (g.gridH+g.gapSize) * (i-1) - g.maxH/2 + (g.gridH+g.gapSize)/2
+			--[[
+			local rect = display.newRect( 0, 0, g.gridW, g.gridH )
+			rect.fill = {1,1,1,0}
+			rect.stroke = {1,0,0}
+			rect.strokeWidth = 2
+			t:insert(rect)
+			]]
+			t.x = (g.gridW+g.gapSize) * (j-1) - g.realW/2 + (g.gridW)/2
+			t.y = (g.gridH+g.gapSize) * (i-1) - g.realH/2 + (g.gridH)/2
 
 			g:insert(t)
 		end
@@ -87,9 +97,11 @@ GridContainer.new = function(options)
 
 	function g:insertAt(obj, i, j)
 		local t = g.tab[i][j]
+		--[[
 		if t.numChildren ~= 0 then
 			t:remove(1)
 		end
+		]]
 		obj.x = 0
 		obj.y = 0
 		t:insert(obj)

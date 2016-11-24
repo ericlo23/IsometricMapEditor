@@ -20,8 +20,8 @@ config.attrTableWidth = config.contentWidth*4/16
 config.attrTableHeight = config.contentHeight
 
 config.controlBarWidth = config.contentWidth*8/16
-config.controlBarHeight = 30
-config.controlBtnHeight = 24
+config.controlBarHeight = 18
+config.controlBtnHeight = 12
 
 config.previewWidth = config.contentWidth*8/16
 config.previewHeight = config.contentHeight-config.controlBarHeight
@@ -38,7 +38,7 @@ config.previewOffsetY = 0
 -- Layer
 config.layerSize = 8
 config.layerScale = 0.3
-config.layOffset = 50
+config.layerOffset = 50
 config.layerDistance = 600
 
 -- Tile box
