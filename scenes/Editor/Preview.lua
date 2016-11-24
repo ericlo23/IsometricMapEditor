@@ -1,3 +1,7 @@
+local json = require("json")
+
+local widget = require("widget")
+
 local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 
@@ -8,7 +12,13 @@ Preview.LAYER_GROUND = 0
 Preview.LAYER_UNDERGROUND = -1
 
 Preview.new = function(w, h)
-	local container = display.newContainer(w, h)
+	--local container = display.newContainer(w, h)
+
+	local container = widget.newScrollView({
+        width = w,
+        height = h,
+        backgroundColor = {0,0,0}
+    })
 
 	local layerGroup = display.newGroup()
 
@@ -31,8 +41,19 @@ Preview.new = function(w, h)
 	layerGroup:insert(underground)
 	layerGroup.underground = underground
 
+	print(layerGroup.width..","..layerGroup.height)
+	print(layerGroup.x..","..layerGroup.y)
+	layerGroup.x = layerGroup.width/2
+	layerGroup.y = layerGroup.height/2
+
+	local rect = display.newRect( 0, 0, layerGroup.width, layerGroup.height )
+	rect.fill = {1,1,1,0.5}
+	layerGroup:insert(rect)
+
+
 	container.layerGroup = layerGroup
 	container:insert(layerGroup)
+	print(layerGroup.x..","..layerGroup.y)
 
 	function container:changeCenter(layerIdx)
 		if layerIdx == Preview.LAYER_SKY then
