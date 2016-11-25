@@ -63,14 +63,14 @@ Layer.new = function(text, options)
 	for i = 1, GameConfig.layerSize do
 		layer.tiles[i] = {}
 		for j = 1, GameConfig.layerSize do
-			layer.tiles[i][j] = BaseTile.new()
-			--layer.tiles[i][j] = display.newGroup()
+			--layer.tiles[i][j] = BaseTile.new()
+			layer.tiles[i][j] = display.newGroup()
+			layer:setTileAt(BaseTile.new(), i, j)
 			local t = layer.tiles[i][j]
 			-- position: isometrically increase + OFFSET
 			t.x = (i-1)*TileInfo.width/2	+ (j-1)*TileInfo.width/2	+ -TileInfo.width*(GameConfig.layerSize-1)/2
 			t.y = -(i-1)*TileInfo.height/2	+ (j-1)*TileInfo.height/2	+ 0
 			t.callback = layer.callback
-
 			local function tapListener(self, event)
 				print("tap on: "..i..","..j)
 				if self.callback then

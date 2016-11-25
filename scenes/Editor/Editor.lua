@@ -93,14 +93,21 @@ function scene:show( event )
         -- tile select callback
         self.selectedTileIdx = -1
         self.tileSelectCallback = function(idx)
-            self.selectedTileIdx = idx
-            print("editor get tile idx: "..idx)
+            if self.selectedTileIdx == idx then
+                print("deselect "..idx)
+                self.selectedTileIdx = -1
+            else
+                print("select "..idx)
+                self.selectedTileIdx = idx
+            end
         end
         -- layer position slect callback
         self.selectedPosX = -1
         self.selectedPosY = -1
         self.posSelectCallback = function(id, x, y)
-            print("editor get position: "..id..","..x..","..y)
+            if self.selectedTileIdx ~= -1 then
+                print("paste tile "..self.selectedTileIdx.." on "..id..","..x..","..y)
+            end
         end
 
 		self:initialLayout()

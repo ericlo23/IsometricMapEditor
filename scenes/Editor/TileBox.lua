@@ -49,8 +49,8 @@ TileBox.new = function(maxW, maxH, layout, options)
                 if self.callback then
                     self.callback(self.idx)
                 end
-                return true
             end
+            return true
         end
         tiles[size].tap = tapListener
         tiles[size]:addEventListener( "tap", tiles[size] )
