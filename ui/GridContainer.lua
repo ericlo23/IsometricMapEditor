@@ -66,7 +66,7 @@ GridContainer.new = function(options)
 	g.realW = g.numCols*(g.gridW+g.gapSize)-g.gapSize
 	g.realH = g.numRows*(g.gridH+g.gapSize)-g.gapSize
 
-	print(json.prettify( g ))
+	--print(json.prettify( g ))
 
 	--[[
 	local r = display.newRect( 0, 0, g.realW, g.realH )

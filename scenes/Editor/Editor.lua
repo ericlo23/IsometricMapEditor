@@ -33,7 +33,10 @@ function scene:initialLayout()
 
 	self.preview = Preview.new(
         GameConfig.previewWidth,
-        GameConfig.previewHeight
+        GameConfig.previewHeight,
+        {
+            callback = self.posSelectCallback
+        }
     )
 
 	self.controlBar = ControlBar.new(
@@ -47,7 +50,8 @@ function scene:initialLayout()
 		GameConfig.tileBoxHeight,
 		TileBox.LAYOUT_VERTICAL,
         {
-            gapSize = 3
+            gapSize = 3,
+            callback = self.tileSelectCallback
         }
 	)
 
@@ -86,7 +90,21 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
+        -- tile select callback
+        self.selectedTileIdx = -1
+        self.tileSelectCallback = function(idx)
+            self.selectedTileIdx = idx
+            print("editor get tile idx: "..idx)
+        end
+        -- layer position slect callback
+        self.selectedPosX = -1
+        self.selectedPosY = -1
+        self.posSelectCallback = function(id, x, y)
+            print("editor get position: "..id..","..x..","..y)
+        end
+
 		self:initialLayout()
+
 
     elseif ( phase == "did" ) then
 

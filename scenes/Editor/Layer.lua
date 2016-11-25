@@ -1,3 +1,7 @@
+local string = require("string")
+
+local BaseTile = require("scenes.Editor.BaseTile")
+
 local TileInfo = require("TileInfo")
 local GameConfig = require("GameConfig")
 
@@ -21,65 +25,20 @@ n: numbers
 	--size---
 ]]
 
-Layer.new = function(text)
+Layer.new = function(text, options)
 	local layer = display.newGroup()
-
+	layer.id = text
+	layer.callback = options and options.callback or nil
 	layer.tiles = {}
 
 	local title = display.newText({
-		text = text,
+		text = string.upper(text),
 		font = native.systemFont,
 		fontSize = 50
 	})
 	title.fill = {0.4, 0.4, 0.4}
 
 	layer:insert(title)
-
-	function layer:setDefaultAt(i, j)
-		local t = self.tiles[i][j]
-		if(t.numChildren ~= 0) then
-			self:cleanAt(i, j)
-		end
-		local g = display.newGroup()
-		g.x = 0
-		g.y = 0
-		local c = display.newCircle(0, 0, 2)
-		c.x = 0
-		c.y = 0
-
-		local l = nil
-		if j == 1 and i == GameConfig.layerSize then
-
-			l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
-				-TileInfo.width/2, 0, 0, -TileInfo.height/2, -- left top
-				TileInfo.width/2, 0, 0, -TileInfo.height/2 -- right top
-			)
-		elseif j == 1 and i ~= GameConfig.layerSize then
-			l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
-				-TileInfo.width/2, 0, 0, -TileInfo.height/2 -- left top
-			)
-		elseif j ~= 1 and i == GameConfig.layerSize then
-			l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2, -- right bottom
-				TileInfo.width/2, 0, 0, -TileInfo.height/2 -- right top
-			)
-		else
-			l = display.newLine(
-				-TileInfo.width/2, 0, 0, TileInfo.height/2, -- left bottom
-				TileInfo.width/2, 0, 0, TileInfo.height/2 -- right bottom
-			)
-		end
-		l:setStrokeColor( 0.3, 0.3, 0.3	 )
-		l.strokeWidth = 2
-		g:insert(l)
-		g:insert(c)
-		t:insert(g)
-	end
 
 	function layer:cleanAt(i, j)
 		local t = self.tiles[i][j]
@@ -104,12 +63,23 @@ Layer.new = function(text)
 	for i = 1, GameConfig.layerSize do
 		layer.tiles[i] = {}
 		for j = 1, GameConfig.layerSize do
-			layer.tiles[i][j] = display.newGroup()
+			layer.tiles[i][j] = BaseTile.new()
+			--layer.tiles[i][j] = display.newGroup()
 			local t = layer.tiles[i][j]
-			-- position: isometric increase + OFFSET
+			-- position: isometrically increase + OFFSET
 			t.x = (i-1)*TileInfo.width/2	+ (j-1)*TileInfo.width/2	+ -TileInfo.width*(GameConfig.layerSize-1)/2
 			t.y = -(i-1)*TileInfo.height/2	+ (j-1)*TileInfo.height/2	+ 0
-			layer:setDefaultAt(i, j)
+			t.callback = layer.callback
+
+			local function tapListener(self, event)
+				print("tap on: "..i..","..j)
+				if self.callback then
+					self.callback(layer.id, i, j)
+				end
+				return true
+			end
+			t.tap = tapListener
+			t:addEventListener( "tap", t )
 			layer:insert(t)
 		end
 	end

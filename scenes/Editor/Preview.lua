@@ -7,25 +7,25 @@ Preview.LAYER_SKY = 1
 Preview.LAYER_GROUND = 0
 Preview.LAYER_UNDERGROUND = -1
 
-Preview.new = function(w, h)
+Preview.new = function(w, h, options)
 	local container = display.newContainer(w, h)
 
 	local layerGroup = display.newGroup()
 
 	-- Layers
-	local sky = Layer.new("SKY")
+	local sky = Layer.new("sky", options)
 	sky.x = 0
 	sky.y = -GameConfig.layerDistance
 	layerGroup:insert(sky)
 	layerGroup.sky = sky
 
-	local ground = Layer.new("GROUND")
+	local ground = Layer.new("ground", options)
 	ground.x = 0
 	ground.y = 0
 	layerGroup:insert(ground)
 	layerGroup.ground = ground
 
-	local underground = Layer.new("UNDERGROUND")
+	local underground = Layer.new("underground", options)
 	underground.x = 0
 	underground.y = GameConfig.layerDistance
 	layerGroup:insert(underground)

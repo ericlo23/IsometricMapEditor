@@ -15,6 +15,7 @@ TileBox.LAYOUT_VERTICAL = 1
 
 TileBox.new = function(maxW, maxH, layout, options)
     local gapSize = options and options.gapSize or 0
+    local callback = options and options.callback or nil
     local options = {
         width = maxW,
         height = maxH,
@@ -32,16 +33,6 @@ TileBox.new = function(maxW, maxH, layout, options)
     local scrollView = widget.newScrollView(options)
     local tiles = {}
     local size = 0
-    local selectedTile = nil
-
-    function scrollView:selectTile(idx)
-        print("select tile: "..idx)
-        self.selectedTile = self.tiles[idx]
-    end
-
-    function scrollView:unselectTile()
-        self.selectedTile = nil
-    end
 
     -- load isotiles
     for i = 1, #(isotiles.sheet.frames) do
@@ -51,14 +42,18 @@ TileBox.new = function(maxW, maxH, layout, options)
         tiles[size].xScale = GameConfig.gridWidth / TileInfo.baseWidth
         tiles[size].yScale = GameConfig.gridWidth / TileInfo.baseWidth
         tiles[size].idx = size
-        tiles[size].tileBox = scrollView
-        tiles[size].touch = function(self, event)
-            if ( event.phase == "ended" ) then
-                self.tileBox:selectTile(self.idx)
+        tiles[size].callback = callback
+        local function tapListener(self, event)
+            if ( event.numTaps == 1 ) then
+                print("tap on: "..self.idx)
+                if self.callback then
+                    self.callback(self.idx)
+                end
+                return true
             end
-            return true
         end
-        tiles[size]:addEventListener( "touch", tiles[size] )
+        tiles[size].tap = tapListener
+        tiles[size]:addEventListener( "tap", tiles[size] )
     end
 
     -- calculate proper layout
@@ -96,7 +91,6 @@ TileBox.new = function(maxW, maxH, layout, options)
 
     scrollView.tiles = tiles
     scrollView.size = size
-    scrollView.selectedTile = selectedTile
 
     return scrollView
 end
