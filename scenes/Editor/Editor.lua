@@ -3,7 +3,7 @@ local widget = require("widget")
 
 local Preview = require("scenes.Editor.Preview")
 local ControlBar = require("scenes.Editor.ControlBar")
-
+local Sprite = require("Sprite")
 local TileBox = require("scenes.Editor.TileBox")
 
 local Layer = require("scenes.Editor.Layer")
@@ -51,7 +51,7 @@ function scene:initialLayout()
 		TileBox.LAYOUT_VERTICAL,
         {
             gapSize = 3,
-            callback = self.tileSelectCallback
+            --callback = self.tileSelectCallback
         }
 	)
 
@@ -90,6 +90,7 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
+        --[[
         -- tile select callback
         self.selectedTileIdx = -1
         self.tileSelectCallback = function(idx)
@@ -101,17 +102,20 @@ function scene:show( event )
                 self.selectedTileIdx = idx
             end
         end
+        ]]
+        
         -- layer position slect callback
         self.selectedPosX = -1
         self.selectedPosY = -1
         self.posSelectCallback = function(id, x, y)
-            if self.selectedTileIdx ~= -1 then
-                print("paste tile "..self.selectedTileIdx.." on "..id..","..x..","..y)
+            if self.tileBox.selectedTileIdx ~= -1 then
+                print("paste tile "..self.tileBox.selectedTileIdx.." on "..id..","..x..","..y)
+                local tile = Sprite["isotiles"].new(tostring(self.tileBox.selectedTileIdx))
+                self.preview.layerGroup[id]:setTileAt(tile, x, y)
             end
         end
 
 		self:initialLayout()
-
 
     elseif ( phase == "did" ) then
 

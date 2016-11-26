@@ -1,6 +1,6 @@
 local string = require("string")
 
-local BaseTile = require("scenes.Editor.BaseTile")
+local TileBase = require("scenes.Editor.TileBase")
 
 local TileInfo = require("TileInfo")
 local GameConfig = require("GameConfig")
@@ -40,6 +40,33 @@ Layer.new = function(text, options)
 
 	layer:insert(title)
 
+	for i = 1, GameConfig.layerSize do
+		layer.tiles[i] = {}
+		for j = 1, GameConfig.layerSize do
+			layer.tiles[i][j] = display.newGroup()
+			local t = layer.tiles[i][j]
+			t.sprite = nil
+			-- position: isometrically increase + OFFSET
+			t.x = (i-1)*TileInfo.width/2	+ (j-1)*TileInfo.width/2	+ -TileInfo.width*(GameConfig.layerSize-1)/2
+			t.y = -(i-1)*TileInfo.height/2	+ (j-1)*TileInfo.height/2	+ 0
+			--insert base tile
+			local tileBase = TileBase.new()
+			tileBase.callback = layer.callback
+			local function tapListener(self, event)
+				print("tap on: "..i..","..j)
+				if self.callback then
+					self.callback(layer.id, i, j)
+				end
+				return true
+			end
+			tileBase.tap = tapListener
+			tileBase:addEventListener( "tap", tileBase )
+			t.tileBase = tileBase
+			t:insert(tileBase)
+			layer:insert(t)
+		end
+	end
+
 	function layer:cleanAt(i, j)
 		local t = self.tiles[i][j]
 		if(t.numChildren == 0) then
@@ -52,36 +79,15 @@ Layer.new = function(text, options)
 
 	function layer:setTileAt(o, i, j)
 		local t = self.tiles[i][j]
-		if(t.numChildren ~= 0) then
-			self:cleanAt(i, j)
+		if t.sprite then
+			print("remove previous tile")
+			t:remove(t.sprite)
 		end
 		o.x = 0
 		o.y = 0
+		t.sprite = o
 		t:insert(o)
-	end
-
-	for i = 1, GameConfig.layerSize do
-		layer.tiles[i] = {}
-		for j = 1, GameConfig.layerSize do
-			--layer.tiles[i][j] = BaseTile.new()
-			layer.tiles[i][j] = display.newGroup()
-			layer:setTileAt(BaseTile.new(), i, j)
-			local t = layer.tiles[i][j]
-			-- position: isometrically increase + OFFSET
-			t.x = (i-1)*TileInfo.width/2	+ (j-1)*TileInfo.width/2	+ -TileInfo.width*(GameConfig.layerSize-1)/2
-			t.y = -(i-1)*TileInfo.height/2	+ (j-1)*TileInfo.height/2	+ 0
-			t.callback = layer.callback
-			local function tapListener(self, event)
-				print("tap on: "..i..","..j)
-				if self.callback then
-					self.callback(layer.id, i, j)
-				end
-				return true
-			end
-			t.tap = tapListener
-			t:addEventListener( "tap", t )
-			layer:insert(t)
-		end
+		o:toBack()
 	end
 
 	return layer

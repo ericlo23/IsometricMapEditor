@@ -33,27 +33,44 @@ TileBox.new = function(maxW, maxH, layout, options)
     local scrollView = widget.newScrollView(options)
     local tiles = {}
     local size = 0
+    local selectedTileIdx = -1
 
     -- load isotiles
     for i = 1, #(isotiles.sheet.frames) do
         size = size + 1
         local name = tostring(i)
-        tiles[size] = Sprite["isotiles"].new(name)
-        tiles[size].xScale = GameConfig.gridWidth / TileInfo.baseWidth
-        tiles[size].yScale = GameConfig.gridWidth / TileInfo.baseWidth
+        local sprite = Sprite["isotiles"].new(name)
+        tiles[size] = display.newGroup()
+        local scale = GameConfig.gridWidth / TileInfo.baseWidth
+        sprite.xScale = scale
+        sprite.yScale = scale
         tiles[size].idx = size
-        tiles[size].callback = callback
+        local rect = display.newRoundedRect(0, 0, GameConfig.gridWidth, GameConfig.gridHeight, 2)
+        rect.fill = {1,0,0}
+        rect.alpha = 0
+        tiles[size].selectRegion = rect
         local function tapListener(self, event)
             if ( event.numTaps == 1 ) then
-                print("tap on: "..self.idx)
-                if self.callback then
-                    self.callback(self.idx)
+                if scrollView.selectedTileIdx ~= self.idx then
+                    if scrollView.selectedTileIdx ~= -1 then
+                        print("deselect:", scrollView.selectedTileIdx)
+                        scrollView.tiles[scrollView.selectedTileIdx].selectRegion.alpha = 0
+                    end
+                    print("select:", self.idx)
+                    scrollView.selectedTileIdx = self.idx
+                    self.selectRegion.alpha = 0.3
+                else
+                    print("deselect:", scrollView.selectedTileIdx)
+                    scrollView.selectedTileIdx = -1
+                    self.selectRegion.alpha = 0
                 end
+                return true
             end
-            return true
         end
         tiles[size].tap = tapListener
         tiles[size]:addEventListener( "tap", tiles[size] )
+        tiles[size]:insert(sprite)
+        tiles[size]:insert(rect)
     end
 
     -- calculate proper layout
@@ -91,6 +108,7 @@ TileBox.new = function(maxW, maxH, layout, options)
 
     scrollView.tiles = tiles
     scrollView.size = size
+    scrollView.selectedTileIdx = selectedTileIdx
 
     return scrollView
 end
