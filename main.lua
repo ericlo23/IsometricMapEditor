@@ -7,6 +7,8 @@ Sprite.setDefaultSrpite("sprites/characters.png", "sprites.characters")
 
 Sprite.addSheet("isotiles", "sprites/isotiles.png", "sprites.isotiles")
 
-composer.gotoScene("scenes.Editor.Editor")
+composer.gotoScene("scenes.AutoOutliner")
+
+--composer.gotoScene("scenes.Editor.Editor")
 --composer.gotoScene("scenes.Demo")
 --composer.gotoScene("scenes.characterdemo")

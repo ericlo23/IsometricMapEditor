@@ -45,7 +45,7 @@ ControlBar.new = function(preview, width, height)
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnReset = widget.newButton({
-		label="RESET",
+		label="CENTER",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
