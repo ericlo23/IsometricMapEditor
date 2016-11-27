@@ -40,7 +40,7 @@ Layer.new = function(text, options)
 
 	layer:insert(title)
 
-	for i = 1, GameConfig.layerSize do
+	for i = GameConfig.layerSize, 1, -1 do
 		layer.tiles[i] = {}
 		for j = 1, GameConfig.layerSize do
 			layer.tiles[i][j] = display.newGroup()

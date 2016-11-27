@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local json = require("json")
 
 local Sprite = require("Sprite")
 local isotiles = require("sprites.isotiles")
@@ -26,15 +27,22 @@ function scene:create( event )
 end
 
 function scene:loadSprites()
-    self.tiles = {}
-    for i = 1, #(isotiles.sheet.frames) do
+    self.sprites = {}
+    self.outlines = {}
+    local imgSheet = Sprite[self.set]:getSheet()
+    local len = #(isotiles.sheet.frames)
+    for i = 1, len do
         local name = tostring(i)
-        self.sprites[i] = Sprite["isotiles"].new(name)
+        -- sprites
+        local s = Sprite[self.set].new(name)
+        self.sprites[i] = s
+        self.view:insert(self.sprites[i])
+        -- outlines and polygons
+        self.outlines[i] = graphics.newOutline(1, imgSheet, i)
+        local p = display.newPolygon(0, 0, self.outlines[i])
+        self.view:insert(p)
+        p:toBack()
     end
-end
-
-function scene:()
-    -- body
 end
 
 -- show()
@@ -44,9 +52,12 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then     
-        self.loadSprites()
-        
+        self.view.x = display.contentCenterX
+        self.view.y = display.contentCenterY
 
+        self.set = "isotiles"
+        self:loadSprites()
+        
     elseif ( phase == "did" ) then
     end
 end
