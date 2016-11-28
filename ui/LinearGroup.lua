@@ -18,6 +18,7 @@ Group.new = function(options)
   function group:resize()
     local lt = 0
     local wh = "width"
+    local xy = ""
     if self.layout == Group.HORIZONTAL then
       wh = "width"
       xy = "x"
