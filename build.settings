@@ -13,7 +13,7 @@ settings =
 		default = "landscapeLeft",
 		supported = { "portrait", "portraitUpsideDown", "landscapeLeft", "landscapeRight"},
 	},
-	
+
 	excludeFiles =
 	{
 		-- Include only the necessary icon files on each platform
@@ -54,7 +54,7 @@ settings =
 			},
 		},
 	},
-	
+
 	--
 	-- Android Section
 	--
