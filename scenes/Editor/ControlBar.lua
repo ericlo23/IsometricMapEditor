@@ -12,7 +12,7 @@ ControlBar.new = function(preview, width, height)
 		maxW = width,
 		maxH = height,
 		rows = 1,
-		cols = 3,
+		cols = 5,
 		gapSize = 1
 	})
 
@@ -58,39 +58,26 @@ ControlBar.new = function(preview, width, height)
 		height = GameConfig.controlBtnHeight,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
-	--[[
-	bar.btnZoomIn = widget.newButton({
-		label="ZOOM\n   IN",
+	bar.btnVisible = widget.newButton({
+		label="VISIBLE",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
 			if event.phase == "ended" then
-				preview:zoomIn()
+				preview:toggleBoardVisible()
 			end
 		end,
 		shape = "roundedRect",
 		width = bar.gridW,
-		height = bar.gridH,
-		fillColor = { default={1,0,0,0.5}, over={1,0.1,0.7,0.4} },
+		height = GameConfig.controlBtnHeight,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
-	bar.btnZoomOut = widget.newButton({
-		label="ZOOM\n  OUT",
-		fontSize = 10,
-		onEvent = function(event)
-			if event.phase == "ended" then
-				preview:zoomOut()
-			end
-		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = bar.gridH,
-		fillColor = { default={1,0,0,0.5}, over={1,0.1,0.7,0.4} },
-	})
-	]]
-	bar:insertAt(bar.btnDown, 1, 1)
-	--bar:insertAt(bar.btnZoomOut, 1, 2)
-	bar:insertAt(bar.btnReset, 1, 2)
-	--bar:insertAt(bar.btnZoomIn, 1, 4)
-	bar:insertAt(bar.btnUp, 1, 3)
+	
+	--bar:insertAt(nil, 1, 1)
+	bar:insertAt(bar.btnDown, 1, 2)
+	bar:insertAt(bar.btnReset, 1, 3)
+	bar:insertAt(bar.btnUp, 1, 4)
+	bar:insertAt(bar.btnVisible, 1, 5)
 
 	return bar
 end

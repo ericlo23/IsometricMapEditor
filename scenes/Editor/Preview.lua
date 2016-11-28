@@ -1,47 +1,28 @@
-local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 
-local Preview = {}
+local World = require("scenes.Editor.World")
 
-Preview.LAYER_SKY = 1
-Preview.LAYER_GROUND = 0
-Preview.LAYER_UNDERGROUND = -1
+local Preview = {}
 
 Preview.new = function(w, h, options)
 	local container = display.newContainer(w, h)
 
-	local world = display.newGroup()
-
-	-- Layers
-	local sky = Layer.new("sky", options)
-	sky.x = 0
-	sky.y = -GameConfig.layerDistance
-	world:insert(sky)
-	world.sky = sky
-
-	local ground = Layer.new("ground", options)
-	ground.x = 0
-	ground.y = 0
-	world:insert(ground)
-	world.ground = ground
-
-	local underground = Layer.new("underground", options)
-	underground.x = 0
-	underground.y = GameConfig.layerDistance
-	world:insert(underground)
-	world.underground = underground
-
+	local world = World.new(options)
 	container.world = world
 	container:insert(world)
 
+	function container:toggleBoardVisible()
+		self.world:toggleBoardVisible()
+	end
+
 	function container:changeCenter(layerIdx)
-		if layerIdx == Preview.LAYER_SKY then
+		if layerIdx == World.LAYER_SKY then
 			self.world.x = self.world.sky.x
 			self.world.y = self.world.sky.y
-		elseif layerIdx == Preview.LAYER_GROUND then
+		elseif layerIdx == World.LAYER_GROUND then
 			self.world.x = self.world.ground.x
 			self.world.y = self.world.ground.y
-		elseif layerIdx == Preview.LAYER_UNDERGROUND then
+		elseif layerIdx == World.LAYER_UNDERGROUND then
 			self.world.x = self.world.underground.x
 			self.world.y = self.world.underground.y
 		end
@@ -69,7 +50,7 @@ Preview.new = function(w, h, options)
 
 	function container:up()
 		print("up")
-		if self.currentLayer < Preview.LAYER_SKY then
+		if self.currentLayer < World.LAYER_SKY then
 			self.currentLayer = self.currentLayer + 1
 			self:changeCenter(self.currentLayer)
 		end
@@ -77,7 +58,7 @@ Preview.new = function(w, h, options)
 
 	function container:down()
 		print("down")
-		if self.currentLayer > Preview.LAYER_UNDERGROUND then
+		if self.currentLayer > World.LAYER_UNDERGROUND then
 			self.currentLayer = self.currentLayer - 1
 			self:changeCenter(self.currentLayer)
 		end
@@ -86,7 +67,7 @@ Preview.new = function(w, h, options)
 	function container:reset()
 		print("reset")
 		self.currentScale = GameConfig.previewScale
-		self.currentLayer = Preview.LAYER_GROUND
+		self.currentLayer = World.LAYER_GROUND
 		self:changeCenter(self.currentLayer)
 		self.world.xScale = GameConfig.previewScale
 		self.world.yScale = GameConfig.previewScale

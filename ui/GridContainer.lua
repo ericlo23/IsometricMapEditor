@@ -96,15 +96,12 @@ GridContainer.new = function(options)
 	g.insert = nil
 
 	function g:insertAt(obj, i, j)
-		local t = g.tab[i][j]
-		--[[
-		if t.numChildren ~= 0 then
-			t:remove(1)
+		if obj then
+			local t = g.tab[i][j]
+			obj.x = 0
+			obj.y = 0
+			t:insert(obj)
 		end
-		]]
-		obj.x = 0
-		obj.y = 0
-		t:insert(obj)
 	end
 
 	return g

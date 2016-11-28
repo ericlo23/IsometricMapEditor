@@ -35,7 +35,8 @@ config.previewScaleStep = 0.05
 config.previewOffsetX = 0
 config.previewOffsetY = 0
 
--- Layer
+-- World
+config.boardAlpha = 1
 config.layerSize = 8
 config.layerScale = 0.3
 config.layerOffset = 50

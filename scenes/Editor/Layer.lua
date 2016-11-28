@@ -30,6 +30,7 @@ Layer.new = function(text, options)
 	layer.id = text
 	layer.callback = options and options.callback or nil
 	layer.tiles = {}
+	layer.boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
 
 	local title = display.newText({
 		text = string.upper(text),
@@ -37,6 +38,8 @@ Layer.new = function(text, options)
 		fontSize = 50
 	})
 	title.fill = {0.4, 0.4, 0.4}
+	title.alpha = layer.boardAlpha
+	layer.title = title
 
 	layer:insert(title)
 
@@ -51,6 +54,7 @@ Layer.new = function(text, options)
 			t.y = -(i-1)*TileInfo.height/2	+ (j-1)*TileInfo.height/2	+ 0
 			--insert base tile
 			local tileBase = TileBase.new()
+			tileBase.alpha = layer.boardAlpha
 			tileBase.callback = layer.callback
 			local function tapListener(self, event)
 				print("tap on: "..i..","..j)
@@ -69,11 +73,8 @@ Layer.new = function(text, options)
 
 	function layer:cleanAt(i, j)
 		local t = self.tiles[i][j]
-		if(t.numChildren == 0) then
-			print("warning! tile is already empty")
-		end
-		for i = 1, t.numChildren do
-			t:remove(1)
+		if t.sprite then
+			t:remove(t.sprite)
 		end
 	end
 
@@ -88,6 +89,22 @@ Layer.new = function(text, options)
 		t.sprite = o
 		t:insert(o)
 		o:toBack()
+	end
+
+	function layer:toggleBoardVisible()
+		local function toggleVisible(obj)
+			if obj.alpha == 1 then
+				obj.alpha = 0
+			else
+				obj.alpha = 1
+			end
+		end
+		toggleVisible(self.title)
+		for i = 1, GameConfig.layerSize do
+			for j = 1, GameConfig.layerSize do
+				toggleVisible(self.tiles[i][j].tileBase)
+			end
+		end
 	end
 
 	return layer

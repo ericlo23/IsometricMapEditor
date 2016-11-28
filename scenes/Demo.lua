@@ -26,9 +26,9 @@ function scene:show( event )
     if ( phase == "will" ) then
 		print("building")
 
-		local sheetName = "RoadtilesNova"
-		local sheetInfo = require("tiles.Wrapped"..sheetName)
-		local imageSheet = graphics.newImageSheet("tiles/"..sheetName..".png", sheetInfo:getSheet())
+		local sheetName = "isotiles"
+		local sheetInfo = require("sprites."..sheetName)
+		local imageSheet = graphics.newImageSheet("sprites/"..sheetName..".png", sheetInfo:getSheet())
 
 		local tileInfo = require("TileInfo")
 
@@ -39,7 +39,7 @@ function scene:show( event )
 		for i = 3, 1, -1 do
 			self.beaches[i] = {}
 			for j = 1, 3 do
-				self.beaches[i][j] = display.newSprite(imageSheet, {frames={sheetInfo:getFrameIndex("beach")}})
+				self.beaches[i][j] = display.newSprite(imageSheet, {frames={sheetInfo:getFrameIndex("90")}})
 				self.beachGroup:insert(self.beaches[i][j])		
 				self.beaches[i][j].x = -tileInfo.width	+ (i-1)*tileInfo.width/2	+ (j-1)*tileInfo.width/2
 				self.beaches[i][j].y = 0				+ -(i-1)*tileInfo.height/2	+ (j-1)*tileInfo.height/2

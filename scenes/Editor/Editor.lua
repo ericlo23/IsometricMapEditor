@@ -163,4 +163,19 @@ local function onMouseEvent(event)
 end
 Runtime:addEventListener("mouse", onMouseEvent)
 
+local function onKeyEvent(event)
+    if event.keyName == "v" then
+        scene.preview:toggleBoardVisible()
+    elseif event.keyName == "up" then
+        if event.phase == "up" then
+            scene.preview:up()
+        end
+    elseif event.keyName == "down" then
+        if event.phase == "up" then
+            scene.preview:down()
+        end
+    end
+end
+Runtime:addEventListener("key", onKeyEvent)
+
 return scene
