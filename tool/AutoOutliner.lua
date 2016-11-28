@@ -1,7 +1,7 @@
 local composer = require( "composer" )
 local json = require("json")
 
-local Sprite = require("Sprite")
+local Sprite = require("sprites.Sprite")
 local isotiles = require("sprites.isotiles")
 
 local scene = composer.newScene()

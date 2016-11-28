@@ -3,7 +3,7 @@ local widget = require("widget")
 
 local Preview = require("scenes.Editor.Preview")
 local ControlBar = require("scenes.Editor.ControlBar")
-local Sprite = require("Sprite")
+local TileSprite = require("sprites.TileSprite")
 local TileBox = require("scenes.Editor.TileBox")
 
 local Layer = require("scenes.Editor.Layer")
@@ -14,9 +14,7 @@ local GridContainer = require("ui.GridContainer")
 local scene = composer.newScene()
 
 function scene:create( event )
-
     local sceneGroup = self.view
-
 end
 
 function scene:initialLayout()
@@ -103,15 +101,16 @@ function scene:show( event )
             end
         end
         ]]
-        
+
         -- layer position slect callback
         self.selectedPosX = -1
         self.selectedPosY = -1
         self.posSelectCallback = function(id, x, y)
-            if self.tileBox.selectedTileIdx ~= -1 then
-                print("paste tile "..self.tileBox.selectedTileIdx.." on "..id..","..x..","..y)
-                local tile = Sprite["isotiles"].new(tostring(self.tileBox.selectedTileIdx))
-                self.preview.layerGroup[id]:setTileAt(tile, x, y)
+            local idx = self.tileBox.selectedTileIdx
+            if idx ~= -1 then
+                print("paste tile "..idx.." on "..id..","..x..","..y)
+                local tile = TileSprite.new("isotiles", tostring(self.tileBox.selectedTileIdx))
+                self.preview.world[id]:setTileAt(tile, x, y)
             end
         end
 

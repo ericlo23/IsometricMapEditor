@@ -1,5 +1,5 @@
 local Character = require("Character")
-local Sprite = require("Sprite")
+local Sprite = require("sprites.Sprite")
 local Ch ={}
 
 Ch.new = function()

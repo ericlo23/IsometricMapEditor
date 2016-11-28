@@ -10,50 +10,50 @@ Preview.LAYER_UNDERGROUND = -1
 Preview.new = function(w, h, options)
 	local container = display.newContainer(w, h)
 
-	local layerGroup = display.newGroup()
+	local world = display.newGroup()
 
 	-- Layers
 	local sky = Layer.new("sky", options)
 	sky.x = 0
 	sky.y = -GameConfig.layerDistance
-	layerGroup:insert(sky)
-	layerGroup.sky = sky
+	world:insert(sky)
+	world.sky = sky
 
 	local ground = Layer.new("ground", options)
 	ground.x = 0
 	ground.y = 0
-	layerGroup:insert(ground)
-	layerGroup.ground = ground
+	world:insert(ground)
+	world.ground = ground
 
 	local underground = Layer.new("underground", options)
 	underground.x = 0
 	underground.y = GameConfig.layerDistance
-	layerGroup:insert(underground)
-	layerGroup.underground = underground
+	world:insert(underground)
+	world.underground = underground
 
-	container.layerGroup = layerGroup
-	container:insert(layerGroup)
+	container.world = world
+	container:insert(world)
 
 	function container:changeCenter(layerIdx)
 		if layerIdx == Preview.LAYER_SKY then
-			self.layerGroup.x = self.layerGroup.sky.x
-			self.layerGroup.y = self.layerGroup.sky.y
+			self.world.x = self.world.sky.x
+			self.world.y = self.world.sky.y
 		elseif layerIdx == Preview.LAYER_GROUND then
-			self.layerGroup.x = self.layerGroup.ground.x
-			self.layerGroup.y = self.layerGroup.ground.y
+			self.world.x = self.world.ground.x
+			self.world.y = self.world.ground.y
 		elseif layerIdx == Preview.LAYER_UNDERGROUND then
-			self.layerGroup.x = self.layerGroup.underground.x
-			self.layerGroup.y = self.layerGroup.underground.y
+			self.world.x = self.world.underground.x
+			self.world.y = self.world.underground.y
 		end
-		self.layerGroup.x = -self.layerGroup.x * self.currentScale + GameConfig.previewOffsetX
-		self.layerGroup.y = -self.layerGroup.y * self.currentScale + GameConfig.previewOffsetY
+		self.world.x = -self.world.x * self.currentScale + GameConfig.previewOffsetX
+		self.world.y = -self.world.y * self.currentScale + GameConfig.previewOffsetY
 	end
 
 	function container:zoomIn()
 		print("zoom in")
 		self.currentScale = self.currentScale + GameConfig.previewScaleStep
-		self.layerGroup.xScale = self.currentScale
-		self.layerGroup.yScale = self.currentScale
+		self.world.xScale = self.currentScale
+		self.world.yScale = self.currentScale
 		self:changeCenter(self.currentLayer)
 	end
 
@@ -61,8 +61,8 @@ Preview.new = function(w, h, options)
 		print("zoom out")
 		if math.floor(self.currentScale*100) > math.floor(GameConfig.previewScaleStep*100) then
 			self.currentScale = self.currentScale - GameConfig.previewScaleStep
-			self.layerGroup.xScale = self.currentScale
-			self.layerGroup.yScale = self.currentScale
+			self.world.xScale = self.currentScale
+			self.world.yScale = self.currentScale
 			self:changeCenter(self.currentLayer)
 		end
 	end
@@ -88,8 +88,8 @@ Preview.new = function(w, h, options)
 		self.currentScale = GameConfig.previewScale
 		self.currentLayer = Preview.LAYER_GROUND
 		self:changeCenter(self.currentLayer)
-		self.layerGroup.xScale = GameConfig.previewScale
-		self.layerGroup.yScale = GameConfig.previewScale
+		self.world.xScale = GameConfig.previewScale
+		self.world.yScale = GameConfig.previewScale
 	end
 
 	-- Layer layout

@@ -1,1 +1,3 @@
-1. use Outline to automatically generate vertices of tile
+1. support "quick add"
+2. de-couple Preview and World
+3. save world status

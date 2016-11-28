@@ -5,7 +5,7 @@ local GridContainer = require("ui.GridContainer")
 local GameConfig = require("GameConfig")
 local TileInfo = require("TileInfo")
 
-local Sprite = require("Sprite")
+local TileSprite = require("sprites.TileSprite")
 local isotiles = require("sprites.isotiles")
 
 local TileBox = {}
@@ -39,11 +39,12 @@ TileBox.new = function(maxW, maxH, layout, options)
     for i = 1, #(isotiles.sheet.frames) do
         size = size + 1
         local name = tostring(i)
-        local sprite = Sprite["isotiles"].new(name)
-        tiles[size] = display.newGroup()
         local scale = GameConfig.gridWidth / TileInfo.baseWidth
-        sprite.xScale = scale
-        sprite.yScale = scale
+        tiles[size] = display.newGroup()
+        tiles[size].sprite = TileSprite.new("isotiles", name)
+        tiles[size].sprite.y = 3
+        tiles[size].sprite.xScale = scale
+        tiles[size].sprite.yScale = scale
         tiles[size].idx = size
         local rect = display.newRoundedRect(0, 0, GameConfig.gridWidth, GameConfig.gridHeight, 2)
         rect.fill = {1,0,0}
@@ -69,7 +70,7 @@ TileBox.new = function(maxW, maxH, layout, options)
         end
         tiles[size].tap = tapListener
         tiles[size]:addEventListener( "tap", tiles[size] )
-        tiles[size]:insert(sprite)
+        tiles[size]:insert(tiles[size].sprite)
         tiles[size]:insert(rect)
     end
 
