@@ -1,2 +1,10 @@
-1. save world status
-2. support "quick add"
+major
+	save world status
+
+minor
+	support "quick add"
+	scroll with swipe
+	clean all
+	clean layer
+	
+	eraser

@@ -2,7 +2,8 @@ local composer = require("composer")
 local widget = require("widget")
 
 local Preview = require("scenes.Editor.Preview")
-local ControlBar = require("scenes.Editor.ControlBar")
+local EditControlBar = require("scenes.Editor.EditControlBar")
+local ViewControlBar = require("scenes.Editor.ViewControlBar")
 local TileSprite = require("sprites.TileSprite")
 local TileBox = require("scenes.Editor.TileBox")
 
@@ -29,6 +30,11 @@ function scene:initialLayout()
 		height = GameConfig.attrTableHeight
 	})
 
+    self.EditControlBar = EditControlBar.new(
+        GameConfig.controlBarWidth,
+        GameConfig.controlBarHeight
+    )
+
 	self.preview = Preview.new(
         GameConfig.previewWidth,
         GameConfig.previewHeight,
@@ -37,7 +43,7 @@ function scene:initialLayout()
         }
     )
 
-	self.controlBar = ControlBar.new(
+	self.ViewControlBar = ViewControlBar.new(
         self.preview,
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight
@@ -49,7 +55,7 @@ function scene:initialLayout()
 		TileBox.LAYOUT_VERTICAL,
         {
             gapSize = 3,
-            --callback = self.tileSelectCallback
+            callback = self.tileSelectCallback
         }
 	)
 
@@ -61,12 +67,15 @@ function scene:initialLayout()
 
 	-- middle part
 	self.middleGroup = display.newGroup()
+    self.EditControlBar.x = 0
+    self.EditControlBar.y = -(GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.preview.x = 0
-	self.preview.y = -(GameConfig.contentHeight-GameConfig.previewHeight)/2
-	self.controlBar.x = 0
-	self.controlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
+	self.preview.y = 0
+	self.ViewControlBar.x = 0
+	self.ViewControlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
+    self.middleGroup:insert(self.EditControlBar)
 	self.middleGroup:insert(self.preview)
-	self.middleGroup:insert(self.controlBar)
+	self.middleGroup:insert(self.ViewControlBar)
 
 	-- right part
 	self.rightGroup = display.newGroup()
@@ -82,36 +91,53 @@ function scene:initialLayout()
 	sceneGroup:insert(self.universalGroup)
 end
 
-function scene:show( event )
+function scene:removeCursorIfExist()
+    local sceneGroup = self.view
+    if self.toolCursor then
+        sceneGroup:remove(self.toolCursor)
+        self.toolCursor = nil
+    end
+end
 
+function scene:setCursor(obj, x, y)
+    local sceneGroup = self.view
+    self.toolCursor = obj
+    self.toolCursor.x = x + 15
+    self.toolCursor.y = y + 10
+    self.toolCursor.xScale = GameConfig.cursorWidth/self.toolCursor.width
+    self.toolCursor.yScale = GameConfig.cursorWidth/self.toolCursor.width
+    sceneGroup:insert(self.toolCursor)
+end
+
+function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
-        --[[
+        self.toolCursor = nil
+
         -- tile select callback
-        self.selectedTileIdx = -1
-        self.tileSelectCallback = function(idx)
-            if self.selectedTileIdx == idx then
-                print("deselect "..idx)
-                self.selectedTileIdx = -1
-            else
-                print("select "..idx)
-                self.selectedTileIdx = idx
+        self.tileSelectCallback = function(x, y)
+            local idx = self.tileBox.selectedTileIdx
+            self:removeCursorIfExist()
+            if idx ~= -1 then
+                self:setCursor(TileSprite.new("isotiles", tostring(idx)), x, y)
             end
         end
-        ]]
 
-        -- layer position slect callback
-        self.selectedPosX = -1
-        self.selectedPosY = -1
+        -- layer position select callback
         self.posSelectCallback = function(id, x, y)
             local idx = self.tileBox.selectedTileIdx
             if idx ~= -1 then
                 print("paste tile "..idx.." on "..id..","..x..","..y)
-                local tile = TileSprite.new("isotiles", tostring(self.tileBox.selectedTileIdx))
+                local tile = TileSprite.new("isotiles", tostring(idx))
                 self.preview.world[id]:setTileAt(tile, x, y)
             end
+        end
+
+        -- eraser btn
+        self.toggleEraser = function()
+
         end
 
 		self:initialLayout()
@@ -155,11 +181,17 @@ end
 Runtime:addEventListener( "orientation", onOrientationChange )
 
 local function onMouseEvent(event)
+    -- scrolling
 	if event.scrollY > 0 then
         scene.preview:zoomOut()
 	elseif event.scrollY < 0 then
         scene.preview:zoomIn()
 	end
+    -- cursor
+    if scene.toolCursor then
+        scene.toolCursor.x = event.x + 15
+        scene.toolCursor.y = event.y + 10
+    end
 end
 Runtime:addEventListener("mouse", onMouseEvent)
 

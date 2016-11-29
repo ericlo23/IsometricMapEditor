@@ -46,6 +46,7 @@ TileBox.new = function(maxW, maxH, layout, options)
         tiles[size].sprite.xScale = scale
         tiles[size].sprite.yScale = scale
         tiles[size].idx = size
+        tiles[size].callback = callback
         local rect = display.newRoundedRect(0, 0, GameConfig.gridWidth, GameConfig.gridHeight, 2)
         rect.fill = {1,0,0}
         rect.alpha = 0
@@ -65,6 +66,7 @@ TileBox.new = function(maxW, maxH, layout, options)
                     scrollView.selectedTileIdx = -1
                     self.selectRegion.alpha = 0
                 end
+                self.callback(event.x, event.y)
                 return true
             end
         end
