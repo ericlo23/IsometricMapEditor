@@ -25,7 +25,11 @@ config.previewWidth = config.contentWidth*8/16
 config.previewHeight = config.contentHeight-config.controlBarHeight*2
 config.tileBoxWidth = config.contentWidth*4/16
 config.tileBoxHeight = config.contentHeight/2
+
+-- Cursor
 config.cursorWidth = 16
+config.cursorOffsetX = 15
+config.cursorOffsetY = 10
 
 -- Preview
 config.previewScale = 0.3

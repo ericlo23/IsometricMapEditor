@@ -6,7 +6,8 @@ local GameConfig = require("GameConfig")
 
 local ControlBar = {}
 
-ControlBar.new = function(width, height)
+ControlBar.new = function(width, height, options)
+	local eraserCallback = options and options.eraserCallback or nil
 
 	local bar = GridContainer.new({
 		maxW = width,
@@ -21,7 +22,9 @@ ControlBar.new = function(width, height)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-					
+			if eraserCallback and event.phase == "ended" then
+				eraserCallback()
+			end
 		end,
 		shape = "roundedRect",
 		width = bar.gridW,

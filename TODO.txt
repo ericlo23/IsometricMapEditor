@@ -6,5 +6,5 @@ minor
 	scroll with swipe
 	clean all
 	clean layer
-	
 	eraser
+	key event "ESC"

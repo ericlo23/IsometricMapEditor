@@ -66,7 +66,9 @@ TileBox.new = function(maxW, maxH, layout, options)
                     scrollView.selectedTileIdx = -1
                     self.selectRegion.alpha = 0
                 end
-                self.callback(event.x, event.y)
+                if self.callback then
+                    self.callback()
+                end
                 return true
             end
         end

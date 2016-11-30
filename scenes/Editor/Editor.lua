@@ -6,19 +6,94 @@ local EditControlBar = require("scenes.Editor.EditControlBar")
 local ViewControlBar = require("scenes.Editor.ViewControlBar")
 local TileSprite = require("sprites.TileSprite")
 local TileBox = require("scenes.Editor.TileBox")
+local TileBase = require("scenes.Editor.TileBase")
+local Cursor = require("ui.Cursor")
 
 local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 local LinearGroup = require("ui.LinearGroup")
 local GridContainer = require("ui.GridContainer")
 
-local scene = composer.newScene()
+local Editor = composer.newScene()
 
-function scene:create( event )
+function Editor:create( event )
     local sceneGroup = self.view
 end
 
-function scene:initialLayout()
+Editor.MODE_NONE = 0
+Editor.MODE_ERASER = 1
+Editor.MODE_TILE = 2
+
+function Editor:initiateCallback()
+    -- control bar callback
+    self.previewUp = function()
+        self.preview:up()
+    end
+    self.previewDown = function()
+        self.preview:down()
+    end
+    self.previewReset = function()
+        self.preview:reset()
+    end
+    self.previewEraser = function()
+        self.preview:toggleBoardVisible()
+    end
+
+    -- tile select callback
+    self.tileSelectCallback = function()
+        if self.mode == Editor.MODE_NONE then
+            local idx = self.tileBox.selectedTileIdx
+            --self.cursor:removeObjIfExist()
+            if idx ~= -1 then
+                self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+            end
+            self.mode = Editor.MODE_TILE
+        elseif self.mode == Editor.MODE_TILE then
+            local idx = self.tileBox.selectedTileIdx
+            self.cursor:removeObjIfExist()
+            if idx ~= -1 then
+                self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+                self.mode = Editor.MODE_TILE
+            else
+                self.mode = Editor.MODE_NONE
+            end
+        elseif self.mode == Editor.MODE_ERASER then
+            self.toggleEraser()
+            self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+            self.mode = Editor.MODE_TILE
+        end
+    end
+
+    -- layer position select callback
+    self.posSelectCallback = function(layer, x, y)
+        if self.mode == Editor.MODE_TILE then
+            local idx = self.tileBox.selectedTileIdx
+            print("paste tile", idx, "on", layer, "("..x..", "..y..")")
+            local tile = TileSprite.new("isotiles", tostring(idx))
+            self.preview.world[layer]:setTileAt(tile, x, y)
+        elseif self.mode == Editor.MODE_ERASER then
+            print("clean on", layer, "("..x..", "..y..")")
+            self.preview.world[layer]:cleanAt(x, y)
+        end
+    end
+
+    -- eraser btn
+    self.toggleEraser = function()
+        local mode = self.mode
+        if self.mode == Editor.MODE_TILE or self.mode == Editor.MODE_ERASER then
+            self.cursor:removeObjIfExist()
+            mode = Editor.MODE_NONE
+        end
+        if self.mode == Editor.MODE_NONE or self.mode == Editor.MODE_TILE then
+            local tileBase = TileBase.new()
+            self.cursor:setObj(tileBase, self.mouseX, self.mouseY)
+            mode = Editor.MODE_ERASER
+        end
+        self.mode = mode
+    end
+end
+
+function Editor:initiateLayout()
 	local sceneGroup = self.view
 	self.universalGroup = LinearGroup.new()
 	self.universalGroup.x = display.contentCenterX
@@ -32,7 +107,10 @@ function scene:initialLayout()
 
     self.EditControlBar = EditControlBar.new(
         GameConfig.controlBarWidth,
-        GameConfig.controlBarHeight
+        GameConfig.controlBarHeight,
+        {
+            eraserCallback = self.toggleEraser
+        }
     )
 
 	self.preview = Preview.new(
@@ -44,9 +122,14 @@ function scene:initialLayout()
     )
 
 	self.ViewControlBar = ViewControlBar.new(
-        self.preview,
         GameConfig.controlBarWidth,
-        GameConfig.controlBarHeight
+        GameConfig.controlBarHeight,
+        {
+            upCallback = self.previewUp,
+            downCallback = self.previewDown,
+            resetCallback = self.previewReset,
+            visibleCallback = self.previewEraser,
+        }
     )
 
 	self.tileBox = TileBox.new(
@@ -91,63 +174,28 @@ function scene:initialLayout()
 	sceneGroup:insert(self.universalGroup)
 end
 
-function scene:removeCursorIfExist()
-    local sceneGroup = self.view
-    if self.toolCursor then
-        sceneGroup:remove(self.toolCursor)
-        self.toolCursor = nil
-    end
-end
-
-function scene:setCursor(obj, x, y)
-    local sceneGroup = self.view
-    self.toolCursor = obj
-    self.toolCursor.x = x + 15
-    self.toolCursor.y = y + 10
-    self.toolCursor.xScale = GameConfig.cursorWidth/self.toolCursor.width
-    self.toolCursor.yScale = GameConfig.cursorWidth/self.toolCursor.width
-    sceneGroup:insert(self.toolCursor)
-end
-
-function scene:show( event )
+function Editor:show( event )
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
-        self.toolCursor = nil
+        -- mode
+        self.mode = Editor.MODE_NONE
 
-        -- tile select callback
-        self.tileSelectCallback = function(x, y)
-            local idx = self.tileBox.selectedTileIdx
-            self:removeCursorIfExist()
-            if idx ~= -1 then
-                self:setCursor(TileSprite.new("isotiles", tostring(idx)), x, y)
-            end
-        end
+        -- cursor
+        self.cursor = Cursor.new()
+        sceneGroup:insert(self.cursor)
 
-        -- layer position select callback
-        self.posSelectCallback = function(id, x, y)
-            local idx = self.tileBox.selectedTileIdx
-            if idx ~= -1 then
-                print("paste tile "..idx.." on "..id..","..x..","..y)
-                local tile = TileSprite.new("isotiles", tostring(idx))
-                self.preview.world[id]:setTileAt(tile, x, y)
-            end
-        end
-
-        -- eraser btn
-        self.toggleEraser = function()
-
-        end
-
-		self:initialLayout()
+        self:initiateCallback() -- should be called before initiateLayout
+		
+        self:initiateLayout()
 
     elseif ( phase == "did" ) then
 
     end
 end
 
-function scene:hide( event )
+function Editor:hide( event )
 
     local sceneGroup = self.view
     local phase = event.phase
@@ -159,16 +207,16 @@ function scene:hide( event )
     end
 end
 
-function scene:destroy( event )
+function Editor:destroy( event )
 
     local sceneGroup = self.view
 
 end
 
-scene:addEventListener( "create", scene )
-scene:addEventListener( "show", scene )
-scene:addEventListener( "hide", scene )
-scene:addEventListener( "destroy", scene )
+Editor:addEventListener( "create", Editor )
+Editor:addEventListener( "show", Editor )
+Editor:addEventListener( "hide", Editor )
+Editor:addEventListener( "destroy", Editor )
 
 local function onOrientationChange( event )
     local currentOrientation = event.type
@@ -181,33 +229,37 @@ end
 Runtime:addEventListener( "orientation", onOrientationChange )
 
 local function onMouseEvent(event)
+    -- record mouse position
+    Editor.mouseX = event.x
+    Editor.mouseY = event.y
     -- scrolling
 	if event.scrollY > 0 then
-        scene.preview:zoomOut()
+        Editor.preview:zoomOut()
 	elseif event.scrollY < 0 then
-        scene.preview:zoomIn()
+        Editor.preview:zoomIn()
 	end
     -- cursor
-    if scene.toolCursor then
-        scene.toolCursor.x = event.x + 15
-        scene.toolCursor.y = event.y + 10
+    if Editor.cursor then
+        Editor.cursor:moveTo(event.x, event.y)
     end
 end
 Runtime:addEventListener("mouse", onMouseEvent)
 
 local function onKeyEvent(event)
     if event.keyName == "v" then
-        scene.preview:toggleBoardVisible()
+        Editor.preview:toggleBoardVisible()
+    elseif event.keyName == "e" and event.phase == "up" then
+        Editor.toggleEraser()
     elseif event.keyName == "up" then
         if event.phase == "up" then
-            scene.preview:up()
+            Editor.preview:up()
         end
     elseif event.keyName == "down" then
         if event.phase == "up" then
-            scene.preview:down()
+            Editor.preview:down()
         end
     end
 end
 Runtime:addEventListener("key", onKeyEvent)
 
-return scene
+return Editor

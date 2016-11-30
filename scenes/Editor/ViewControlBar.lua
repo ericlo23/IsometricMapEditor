@@ -6,7 +6,11 @@ local GameConfig = require("GameConfig")
 
 local ControlBar = {}
 
-ControlBar.new = function(preview, width, height)
+ControlBar.new = function(width, height, options)
+	local upCallback = options and options.upCallback or nil
+	local downCallback = options and options.downCallback or nil
+	local resetCallback = options and options.resetCallback or nil
+	local visibleCallback = options and options.visibleCallback or nil
 
 	local bar = GridContainer.new({
 		maxW = width,
@@ -21,9 +25,10 @@ ControlBar.new = function(preview, width, height)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-				if event.phase == "ended" then
-					preview:up()
+				if event.phase == "ended" and upCallback then
+					upCallback()
 				end
+
 		end,
 		shape = "roundedRect",
 		width = bar.gridW,
@@ -35,8 +40,8 @@ ControlBar.new = function(preview, width, height)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-			if event.phase == "ended" then
-				preview:down()
+			if event.phase == "ended" and downCallback then
+				downCallback()
 			end
 		end,
 		shape = "roundedRect",
@@ -49,8 +54,8 @@ ControlBar.new = function(preview, width, height)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-			if event.phase == "ended" then
-				preview:reset()
+			if event.phase == "ended" and resetCallback then
+				resetCallback()
 			end
 		end,
 		shape = "roundedRect",
@@ -63,8 +68,8 @@ ControlBar.new = function(preview, width, height)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-			if event.phase == "ended" then
-				preview:toggleBoardVisible()
+			if event.phase == "ended" and visibleCallback then
+				visibleCallback()
 			end
 		end,
 		shape = "roundedRect",

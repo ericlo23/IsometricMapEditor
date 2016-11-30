@@ -1,8 +1,8 @@
 local GameConfig = require("GameConfig")
 local TileInfo = require("TileInfo")
-local BaseTile = {}
+local TileBase = {}
 
-BaseTile.new = function(options)
+TileBase.new = function(options)
     local tile = display.newGroup()
 
     -- tile polygon
@@ -26,4 +26,4 @@ BaseTile.new = function(options)
     return tile
 end
 
-return BaseTile
+return TileBase

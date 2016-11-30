@@ -75,6 +75,7 @@ Layer.new = function(text, options)
 		local t = self.tiles[i][j]
 		if t.sprite then
 			t:remove(t.sprite)
+			t.sprite = nil
 		end
 	end
 
