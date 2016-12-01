@@ -86,6 +86,7 @@ Layer.new = function(text, options)
 		if t.sprite then
 			print("remove previous tile")
 			t:remove(t.sprite)
+			t.sprite = nil
 		end
 		o.x = 0
 		o.y = 0

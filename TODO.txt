@@ -1,7 +1,10 @@
 major
-	save world status
-
-minor
 	scroll with swipe
+	save world status
+minor
 	clean all
 	clean layer
+
+
+potential problem
+	tile sprite's name

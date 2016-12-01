@@ -72,12 +72,12 @@ function Editor:initiateCallback()
     end
 
     -- layer position select callback
-    self.lastPasteTileIdx = -1
     self.posSelectCallback = function(layer, x, y)
         -- paste tile
         if self.mode == Editor.MODE_TILE then
             local idx = self.tileBox.selectedTileIdx
-            if self.lastPasteTileIdx ~= idx then
+            local oldSprite = self.preview.world[layer].tiles[x][y].sprite
+            if not oldSprite or (oldSprite and oldSprite.name ~= tostring(idx)) then
                 print("paste tile", idx, "on", layer, "("..x..", "..y..")")
                 local tile = TileSprite.new("isotiles", tostring(idx))
                 self.preview.world[layer]:setTileAt(tile, x, y)
