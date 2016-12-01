@@ -5,17 +5,17 @@ local World = require("scenes.Editor.World")
 local Preview = {}
 
 Preview.new = function(w, h, options)
-	local container = display.newContainer(w, h)
+	local preview = display.newContainer(w, h)
 
 	local world = World.new(options)
-	container.world = world
-	container:insert(world)
+	preview.world = world
+	preview:insert(world)
 
-	function container:toggleBoardVisible()
+	function preview:toggleBoardVisible()
 		self.world:toggleBoardVisible()
 	end
 
-	function container:changeCenter(layerIdx)
+	function preview:changeCenter(layerIdx)
 		if layerIdx == World.LAYER_SKY then
 			self.world.x = self.world.sky.x
 			self.world.y = self.world.sky.y
@@ -30,7 +30,7 @@ Preview.new = function(w, h, options)
 		self.world.y = -self.world.y * self.currentScale + GameConfig.previewOffsetY
 	end
 
-	function container:zoomIn()
+	function preview:zoomIn()
 		print("zoom in")
 		self.currentScale = self.currentScale + GameConfig.previewScaleStep
 		self.world.xScale = self.currentScale
@@ -38,7 +38,7 @@ Preview.new = function(w, h, options)
 		self:changeCenter(self.currentLayer)
 	end
 
-	function container:zoomOut()
+	function preview:zoomOut()
 		print("zoom out")
 		if math.floor(self.currentScale*100) > math.floor(GameConfig.previewScaleStep*100) then
 			self.currentScale = self.currentScale - GameConfig.previewScaleStep
@@ -48,7 +48,7 @@ Preview.new = function(w, h, options)
 		end
 	end
 
-	function container:up()
+	function preview:up()
 		print("up")
 		if self.currentLayer < World.LAYER_SKY then
 			self.currentLayer = self.currentLayer + 1
@@ -56,7 +56,7 @@ Preview.new = function(w, h, options)
 		end
 	end
 
-	function container:down()
+	function preview:down()
 		print("down")
 		if self.currentLayer > World.LAYER_UNDERGROUND then
 			self.currentLayer = self.currentLayer - 1
@@ -64,7 +64,7 @@ Preview.new = function(w, h, options)
 		end
 	end
 
-	function container:default()
+	function preview:default()
 		print("default")
 		self.currentScale = GameConfig.previewScale
 		self.currentLayer = World.LAYER_GROUND
@@ -74,9 +74,9 @@ Preview.new = function(w, h, options)
 	end
 
 	-- Layer layout
-	container:default()
+	preview:default()
 
-	return container
+	return preview
 end
 
 return Preview

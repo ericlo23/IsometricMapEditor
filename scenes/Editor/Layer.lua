@@ -56,15 +56,17 @@ Layer.new = function(text, options)
 			local tileBase = TileBase.new()
 			tileBase.alpha = layer.boardAlpha
 			tileBase.callback = layer.callback
-			local function tapListener(self, event)
-				print("tap on: "..i..","..j)
-				if self.callback then
-					self.callback(layer.id, i, j)
+			local function touchListener(self, event)
+				if event.phase == "began" or event.phase == "moved" then
+					print("touch on: "..i..","..j)
+					if self.callback then
+						self.callback(layer.id, i, j)
+					end
+					return true
 				end
-				return true
 			end
-			tileBase.tap = tapListener
-			tileBase:addEventListener( "tap", tileBase )
+			tileBase.touch = touchListener
+			tileBase:addEventListener( "touch", tileBase )
 			t.tileBase = tileBase
 			t:insert(tileBase)
 			layer:insert(t)

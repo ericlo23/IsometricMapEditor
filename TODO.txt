@@ -2,7 +2,6 @@ major
 	save world status
 
 minor
-	support "quick add"
 	scroll with swipe
 	clean all
 	clean layer
