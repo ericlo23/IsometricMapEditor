@@ -30,10 +30,33 @@ TileBox.new = function(maxW, maxH, layout, options)
         return nil
     end
 
-    local scrollView = widget.newScrollView(options)
+    local tileBox = widget.newScrollView(options)
     local tiles = {}
     local size = 0
     local selectedTileIdx = -1
+
+    function tileBox:deselectTile()
+        print("deselect:", self.selectedTileIdx)
+        self.tiles[self.selectedTileIdx].selectRegion.alpha = 0
+        self.selectedTileIdx = -1
+    end
+
+    function tileBox:selectTile(idx)
+        print("select:", idx)
+        self.selectedTileIdx = idx
+        self.tiles[self.selectedTileIdx].selectRegion.alpha = 0.3
+    end
+
+    function tileBox:chooseTile(idx)
+        if self.selectedTileIdx ~= idx then
+            if self.selectedTileIdx ~= -1 then
+                self:deselectTile()
+            end
+            self:selectTile(idx)
+        else
+            self:deselectTile()
+        end
+    end
 
     -- load isotiles
     for i = 1, #(isotiles.sheet.frames) do
@@ -46,28 +69,15 @@ TileBox.new = function(maxW, maxH, layout, options)
         tiles[size].sprite.xScale = scale
         tiles[size].sprite.yScale = scale
         tiles[size].idx = size
-        tiles[size].callback = callback
         local rect = display.newRoundedRect(0, 0, GameConfig.gridWidth, GameConfig.gridHeight, 2)
         rect.fill = {1,0,0}
         rect.alpha = 0
         tiles[size].selectRegion = rect
         local function tapListener(self, event)
             if ( event.numTaps == 1 ) then
-                if scrollView.selectedTileIdx ~= self.idx then
-                    if scrollView.selectedTileIdx ~= -1 then
-                        print("deselect:", scrollView.selectedTileIdx)
-                        scrollView.tiles[scrollView.selectedTileIdx].selectRegion.alpha = 0
-                    end
-                    print("select:", self.idx)
-                    scrollView.selectedTileIdx = self.idx
-                    self.selectRegion.alpha = 0.3
-                else
-                    print("deselect:", scrollView.selectedTileIdx)
-                    scrollView.selectedTileIdx = -1
-                    self.selectRegion.alpha = 0
-                end
-                if self.callback then
-                    self.callback()
+                tileBox:chooseTile(self.idx)
+                if callback then
+                    callback()
                 end
                 return true
             end
@@ -109,13 +119,13 @@ TileBox.new = function(maxW, maxH, layout, options)
 
     container.x = maxW/2
     container.y = container.realH/2
-    scrollView:insert(container)
+    tileBox:insert(container)
 
-    scrollView.tiles = tiles
-    scrollView.size = size
-    scrollView.selectedTileIdx = selectedTileIdx
+    tileBox.tiles = tiles
+    tileBox.size = size
+    tileBox.selectedTileIdx = selectedTileIdx
 
-    return scrollView
+    return tileBox
 end
 
 return TileBox

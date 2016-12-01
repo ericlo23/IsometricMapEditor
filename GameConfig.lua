@@ -2,6 +2,8 @@ local config = {}
 
 config.contentWidth = display.contentWidth
 config.contentHeight = display.contentHeight
+config.contentCenterX = display.contentCenterX
+config.contentCenterY = display.contentCenterY
 
 config.basicHeight = 720
 
@@ -32,17 +34,16 @@ config.cursorOffsetX = 15
 config.cursorOffsetY = 10
 
 -- Preview
-config.previewScale = 0.3
-config.previewScaleStep = 0.05
+config.previewScale = 0.2
+config.previewScaleStep = config.previewScale / 10
 config.previewOffsetX = 0
 config.previewOffsetY = 0
 
 -- World
 config.boardAlpha = 1
-config.layerSize = 7
-config.layerScale = 0.3
+config.layerSize = 15
 config.layerOffset = 50
-config.layerDistance = 600
+config.layerDistance = 1000
 
 -- Tile box
 config.gridWidth = 20

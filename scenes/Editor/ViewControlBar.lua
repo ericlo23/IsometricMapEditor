@@ -9,7 +9,7 @@ local ControlBar = {}
 ControlBar.new = function(width, height, options)
 	local upCallback = options and options.upCallback or nil
 	local downCallback = options and options.downCallback or nil
-	local resetCallback = options and options.resetCallback or nil
+	local defaultCallback = options and options.defaultCallback or nil
 	local visibleCallback = options and options.visibleCallback or nil
 
 	local bar = GridContainer.new({
@@ -49,13 +49,13 @@ ControlBar.new = function(width, height, options)
 		height = GameConfig.controlBtnHeight,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
-	bar.btnReset = widget.newButton({
-		label="CENTER",
+	bar.btnDefault = widget.newButton({
+		label="DEFAULT",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-			if event.phase == "ended" and resetCallback then
-				resetCallback()
+			if event.phase == "ended" and defaultCallback then
+				defaultCallback()
 			end
 		end,
 		shape = "roundedRect",
@@ -80,7 +80,7 @@ ControlBar.new = function(width, height, options)
 	
 	--bar:insertAt(nil, 1, 1)
 	bar:insertAt(bar.btnDown, 1, 2)
-	bar:insertAt(bar.btnReset, 1, 3)
+	bar:insertAt(bar.btnDefault, 1, 3)
 	bar:insertAt(bar.btnUp, 1, 4)
 	bar:insertAt(bar.btnVisible, 1, 5)
 

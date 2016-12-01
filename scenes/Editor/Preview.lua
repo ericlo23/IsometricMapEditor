@@ -64,8 +64,8 @@ Preview.new = function(w, h, options)
 		end
 	end
 
-	function container:reset()
-		print("reset")
+	function container:default()
+		print("default")
 		self.currentScale = GameConfig.previewScale
 		self.currentLayer = World.LAYER_GROUND
 		self:changeCenter(self.currentLayer)
@@ -74,7 +74,7 @@ Preview.new = function(w, h, options)
 	end
 
 	-- Layer layout
-	container:reset()
+	container:default()
 
 	return container
 end

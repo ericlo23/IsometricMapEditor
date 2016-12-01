@@ -24,6 +24,18 @@ Editor.MODE_NONE = 0
 Editor.MODE_ERASER = 1
 Editor.MODE_TILE = 2
 
+function Editor:enableEraser()
+    print("enable eraser")
+    self.cursor:setObj(TileBase.new(), self.mouseX, self.mouseY)
+    self.mode = Editor.MODE_ERASER
+end
+
+function Editor:disableEraser()
+    print("disable eraser")
+    self.cursor:removeObjIfExist()
+    self.mode = Editor.MODE_NONE
+end
+
 function Editor:initiateCallback()
     -- control bar callback
     self.previewUp = function()
@@ -32,8 +44,8 @@ function Editor:initiateCallback()
     self.previewDown = function()
         self.preview:down()
     end
-    self.previewReset = function()
-        self.preview:reset()
+    self.previewDefault = function()
+        self.preview:default()
     end
     self.previewEraser = function()
         self.preview:toggleBoardVisible()
@@ -41,24 +53,19 @@ function Editor:initiateCallback()
 
     -- tile select callback
     self.tileSelectCallback = function()
+        local idx = self.tileBox.selectedTileIdx
         if self.mode == Editor.MODE_NONE then
-            local idx = self.tileBox.selectedTileIdx
-            --self.cursor:removeObjIfExist()
-            if idx ~= -1 then
-                self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
-            end
+            self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
             self.mode = Editor.MODE_TILE
         elseif self.mode == Editor.MODE_TILE then
-            local idx = self.tileBox.selectedTileIdx
             self.cursor:removeObjIfExist()
             if idx ~= -1 then
                 self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
-                self.mode = Editor.MODE_TILE
             else
                 self.mode = Editor.MODE_NONE
             end
         elseif self.mode == Editor.MODE_ERASER then
-            self.toggleEraser()
+            self:disableEraser()
             self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
             self.mode = Editor.MODE_TILE
         end
@@ -66,11 +73,13 @@ function Editor:initiateCallback()
 
     -- layer position select callback
     self.posSelectCallback = function(layer, x, y)
+        -- paste tile
         if self.mode == Editor.MODE_TILE then
             local idx = self.tileBox.selectedTileIdx
             print("paste tile", idx, "on", layer, "("..x..", "..y..")")
             local tile = TileSprite.new("isotiles", tostring(idx))
             self.preview.world[layer]:setTileAt(tile, x, y)
+        -- clean tile
         elseif self.mode == Editor.MODE_ERASER then
             print("clean on", layer, "("..x..", "..y..")")
             self.preview.world[layer]:cleanAt(x, y)
@@ -79,18 +88,19 @@ function Editor:initiateCallback()
 
     -- eraser btn
     self.toggleEraser = function()
-        local mode = self.mode
-        if self.mode == Editor.MODE_TILE or self.mode == Editor.MODE_ERASER then
-            self.cursor:removeObjIfExist()
-            mode = Editor.MODE_NONE
+        if self.mode == Editor.MODE_ERASER then
+            -- disable eraser
+            self:disableEraser()
+        else
+            -- enable eraser
+            if self.mode == Editor.MODE_TILE then
+                self.tileBox:deselectTile()
+                self.cursor:removeObjIfExist()
+            end
+            self:enableEraser()
         end
-        if self.mode == Editor.MODE_NONE or self.mode == Editor.MODE_TILE then
-            local tileBase = TileBase.new()
-            self.cursor:setObj(tileBase, self.mouseX, self.mouseY)
-            mode = Editor.MODE_ERASER
-        end
-        self.mode = mode
     end
+
 end
 
 function Editor:initiateLayout()
@@ -127,7 +137,7 @@ function Editor:initiateLayout()
         {
             upCallback = self.previewUp,
             downCallback = self.previewDown,
-            resetCallback = self.previewReset,
+            defaultCallback = self.previewDefault,
             visibleCallback = self.previewEraser,
         }
     )
@@ -184,6 +194,8 @@ function Editor:show( event )
 
         -- cursor
         self.cursor = Cursor.new()
+        self.mouseX = GameConfig.contentCenterX
+        self.mouseY = GameConfig.contentCenterY
         sceneGroup:insert(self.cursor)
 
         self:initiateCallback() -- should be called before initiateLayout
@@ -250,13 +262,19 @@ local function onKeyEvent(event)
         Editor.preview:toggleBoardVisible()
     elseif event.keyName == "e" and event.phase == "up" then
         Editor.toggleEraser()
-    elseif event.keyName == "up" then
-        if event.phase == "up" then
-            Editor.preview:up()
-        end
-    elseif event.keyName == "down" then
-        if event.phase == "up" then
-            Editor.preview:down()
+    elseif event.keyName == "up" and event.phase == "up" then
+        Editor.preview:up()
+    elseif event.keyName == "down" and event.phase == "up" then
+        Editor.preview:down()
+    elseif event.keyName == "escape" and event.phase == "up" then
+        Editor.cursor:removeObjIfExist()
+        if Editor.mode == Editor.MODE_ERASER then
+            Editor.toggleEraser()
+            Editor.mode = Editor.MODE_NONE
+        elseif Editor.mode == Editor.MODE_TILE then
+            Editor.tileBox:deselectTile()
+            Editor.mode = Editor.MODE_NONE
+        else
         end
     end
 end
