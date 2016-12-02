@@ -1,9 +1,9 @@
 major
 	scroll with swipe
 	save world status
+
 minor
-	clean all
-	clean layer
+
 
 
 potential problem

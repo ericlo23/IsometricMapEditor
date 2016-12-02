@@ -73,19 +73,20 @@ function Editor:initiateCallback()
 
     -- layer position select callback
     self.posSelectCallback = function(layer, x, y)
+        local world = self.preview:getCurrentWorld()
         -- paste tile
         if self.mode == Editor.MODE_TILE then
-            local idx = self.tileBox.selectedTileIdx
-            local oldSprite = self.preview.world[layer].tiles[x][y].sprite
+            local idx = self.tileBox.selectedTileIdx    
+            local oldSprite = world[layer].tiles[x][y].sprite
             if not oldSprite or (oldSprite and oldSprite.name ~= tostring(idx)) then
                 print("paste tile", idx, "on", layer, "("..x..", "..y..")")
                 local tile = TileSprite.new("isotiles", tostring(idx))
-                self.preview.world[layer]:setTileAt(tile, x, y)
+                world[layer]:setTileAt(tile, x, y)
             end
         -- clean tile
         elseif self.mode == Editor.MODE_ERASER then
             print("clean on", layer, "("..x..", "..y..")")
-            self.preview.world[layer]:cleanAt(x, y)
+            world[layer]:cleanAt(x, y)
         end
     end
 
@@ -272,7 +273,7 @@ local function onKeyEvent(event)
     elseif event.keyName == "escape" and event.phase == "up" then
         Editor.cursor:removeObjIfExist()
         if Editor.mode == Editor.MODE_ERASER then
-            Editor.toggleEraser()
+            Editor:disableEraser()
             Editor.mode = Editor.MODE_NONE
         elseif Editor.mode == Editor.MODE_TILE then
             Editor.tileBox:deselectTile()

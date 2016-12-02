@@ -11,6 +11,7 @@ World.LAYER_UNDERGROUND = -1
 World.new = function(options)
 	local world = display.newGroup()
 	local boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
+	world.name = options and options.name or "default"
 
 	local sky = Layer.new("sky", options)
 	sky.x = 0
