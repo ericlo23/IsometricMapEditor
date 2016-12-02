@@ -109,7 +109,7 @@ Preview.new = function(w, h, options)
 				moveBegin()
 			end
 		elseif ( event.phase == "moved" ) then
-			if moving then
+			if moving and preview.preTouchX and preview.preTouchY then
 				moving(event.x-preview.preTouchX, event.y-preview.preTouchY)
 			end
 			preview.preTouchX = event.x

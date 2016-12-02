@@ -102,14 +102,12 @@ function Editor:initiateCallback()
             local idx = self.tileBox.selectedTileIdx    
             local oldSprite = world[layer].tiles[x][y].sprite
             if not oldSprite or (oldSprite and oldSprite.name ~= tostring(idx)) then
-                print("paste tile", idx, "on", layer, "("..x..", "..y..")")
                 local tile = TileSprite.new("isotiles", tostring(idx))
                 world[layer]:setTileAt(tile, x, y)
             end
             return true
         -- clean tile
         elseif self.mode == Editor.MODE_ERASER then
-            print("clean on", layer, "("..x..", "..y..")")
             world[layer]:cleanAt(x, y)
             return true
         end
@@ -139,11 +137,15 @@ function Editor:initiateCallback()
     end
 
     self.movingCallback = function(distX, distY)
-        self.preview:move(distX, distY)
+        if self.mode == Editor.MODE_MOVE then
+            self.preview:move(distX, distY)
+        end
     end
 
     self.moveEndCallback = function()
-        self:toMode(self.preMode)
+        if self.mode == Editor.MODE_MOVE then
+            self:toMode(self.preMode)
+        end
     end
 
 end
@@ -288,9 +290,15 @@ end
 Runtime:addEventListener( "orientation", onOrientationChange )
 
 local function onMouseEvent(event)
+    --print(event.x, event.y)
     -- record mouse position
     Editor.mouseX = event.x
     Editor.mouseY = event.y
+    if Editor.mode == Editor.MODE_MOVE and 
+            (event.x == 0 or event.x == GameConfig.contentWidth or 
+             event.y == 0 or event.y == GameConfig.contentHeight) then
+        Editor.moveEndCallback()
+    end
     -- scrolling
 	if event.scrollY > 0 then
         Editor.preview:zoomOut()

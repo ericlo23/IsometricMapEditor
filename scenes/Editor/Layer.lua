@@ -57,7 +57,7 @@ Layer.new = function(text, options)
 			tileBase.alpha = layer.boardAlpha
 			tileBase.callback = layer.callback
 			local function touchListener(self, event)
-				print("touch on: "..i..","..j)
+				--print("touch on: "..i..","..j)
 				if self.callback then
 					return self.callback(layer.id, i, j)
 				end
@@ -74,6 +74,7 @@ Layer.new = function(text, options)
 	function layer:cleanAt(i, j)
 		local t = self.tiles[i][j]
 		if t.sprite then
+			print("remove tile at", self.id, "("..i..", "..j..")")
 			t:remove(t.sprite)
 			t.sprite = nil
 		end
@@ -86,6 +87,7 @@ Layer.new = function(text, options)
 			t:remove(t.sprite)
 			t.sprite = nil
 		end
+		print("paste tile at", self.id, "("..i..", "..j..")")
 		o.x = 0
 		o.y = 0
 		t.sprite = o
