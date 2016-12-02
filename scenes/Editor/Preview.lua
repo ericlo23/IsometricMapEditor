@@ -24,18 +24,19 @@ Preview.new = function(w, h, options)
 
 	function preview:changeCenter(worldIdx, layerIdx)
 		local world = self.universe:getWorld(worldIdx)
+		local layer = nil
 		if layerIdx == World.LAYER_SKY then
-			universe.x = world.sky.x
-			universe.y = world.sky.y
+			layer = world.sky
 		elseif layerIdx == World.LAYER_GROUND then
-			universe.x = world.ground.x
-			universe.y = world.ground.y
+			layer = world.ground
 		elseif layerIdx == World.LAYER_UNDERGROUND then
-			universe.x = world.underground.x
-			universe.y = world.underground.y
+			layer = world.underground
+		else
+			print("invalid layer index")
+			return
 		end
-		universe.x = -universe.x * self.currentScale + GameConfig.previewOffsetX
-		universe.y = -universe.y * self.currentScale + GameConfig.previewOffsetY
+		universe.x = -layer.x * self.currentScale + GameConfig.previewOffsetX
+		universe.y = -layer.y * self.currentScale + GameConfig.previewOffsetY
 	end
 
 	function preview:zoomIn()
