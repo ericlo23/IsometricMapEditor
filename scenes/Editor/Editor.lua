@@ -23,17 +23,40 @@ end
 Editor.MODE_NONE = 0
 Editor.MODE_ERASER = 1
 Editor.MODE_TILE = 2
+Editor.MODE_MOVE = 3
 
+-- eraser
 function Editor:enableEraser()
     print("enable eraser")
     self.cursor:setObj(TileBase.new(), self.mouseX, self.mouseY)
-    self.mode = Editor.MODE_ERASER
+    self:toMode(Editor.MODE_ERASER)
 end
-
 function Editor:disableEraser()
     print("disable eraser")
     self.cursor:removeObjIfExist()
-    self.mode = Editor.MODE_NONE
+    self:toMode(Editor.MODE_NONE)
+end
+
+function Editor:toMode(mode)
+    if mode == self.mode then
+        print("stay same mode")
+        return
+    end
+    local s = nil
+    if mode == Editor.MODE_NONE then
+        s = "NONE"
+    elseif mode == Editor.MODE_ERASER then
+        s = "ERASER"
+    elseif mode == Editor.MODE_TILE then
+        s = "TILE"
+    elseif mode == Editor.MODE_MOVE then
+        s = "MVOE"
+    else
+        print("invalid mode")
+        return
+    end
+    self.mode = mode
+    print("switch to", s, "mode")
 end
 
 function Editor:initiateCallback()
@@ -56,18 +79,18 @@ function Editor:initiateCallback()
         local idx = self.tileBox.selectedTileIdx
         if self.mode == Editor.MODE_NONE then
             self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
-            self.mode = Editor.MODE_TILE
+            self:toMode(Editor.MODE_TILE)
         elseif self.mode == Editor.MODE_TILE then
             self.cursor:removeObjIfExist()
             if idx ~= -1 then
                 self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
             else
-                self.mode = Editor.MODE_NONE
+                self:toMode(Editor.MODE_NONE)
             end
         elseif self.mode == Editor.MODE_ERASER then
             self:disableEraser()
             self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
-            self.mode = Editor.MODE_TILE
+            self:toMode(Editor.MODE_TILE)
         end
     end
 
@@ -83,11 +106,14 @@ function Editor:initiateCallback()
                 local tile = TileSprite.new("isotiles", tostring(idx))
                 world[layer]:setTileAt(tile, x, y)
             end
+            return true
         -- clean tile
         elseif self.mode == Editor.MODE_ERASER then
             print("clean on", layer, "("..x..", "..y..")")
             world[layer]:cleanAt(x, y)
+            return true
         end
+        return false
     end
 
     -- eraser btn
@@ -103,6 +129,21 @@ function Editor:initiateCallback()
             end
             self:enableEraser()
         end
+    end
+
+    -- move callbacks
+    self.preMode = nil
+    self.moveBeginCallback = function()
+        self.preMode = self.mode
+        self:toMode(Editor.MODE_MOVE)
+    end
+
+    self.movingCallback = function(distX, distY)
+        self.preview:move(distX, distY)
+    end
+
+    self.moveEndCallback = function()
+        self:toMode(self.preMode)
     end
 
 end
@@ -131,7 +172,10 @@ function Editor:initiateLayout()
         GameConfig.previewWidth,
         GameConfig.previewHeight,
         {
-            callback = self.posSelectCallback
+            callback = self.posSelectCallback,
+            moveBegin = self.moveBeginCallback,
+            moving = self.movingCallback,
+            moveEnd = self.moveEndCallback
         }
     )
 
@@ -194,8 +238,7 @@ function Editor:show( event )
 
     if ( phase == "will" ) then
         -- mode
-        self.mode = Editor.MODE_NONE
-
+        self:toMode(Editor.MODE_NONE)
         -- cursor
         self.cursor = Cursor.new()
         self.mouseX = GameConfig.contentCenterX

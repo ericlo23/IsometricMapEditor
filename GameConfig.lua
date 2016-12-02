@@ -38,6 +38,7 @@ config.previewScale = 0.2
 config.previewScaleStep = config.previewScale / 10
 config.previewOffsetX = 0
 config.previewOffsetY = 0
+config.previewMoveFactor = 2
 
 -- World
 config.boardAlpha = 1

@@ -6,12 +6,20 @@ local Universe = require("scenes.Editor.Universe")
 local Preview = {}
 
 Preview.new = function(w, h, options)
+	local moveBegin = options and options.moveBegin or nil
+	local moving = options and options.moving or nil
+	local moveEnd = options and options.moveEnd or nil
+
 	local preview = display.newContainer(w, h)
 	local universe = Universe.new()
-
 	universe:addWorld(World.new(options))
-
 	preview.universe = universe
+
+	-- make preview touchable
+	local rect = display.newRect(0, 0, w, h)
+	rect.fill = {1,1,1,0}
+	rect.isHitTestable = true
+	preview:insert(rect)
 	preview:insert(universe)
 
 	function preview:getCurrentWorld()
@@ -85,6 +93,36 @@ Preview.new = function(w, h, options)
 
 	-- Layer layout
 	preview:default()
+
+	function preview:move(distX, distY)
+		self.universe.x = self.universe.x + distX * GameConfig.previewMoveFactor
+		self.universe.y = self.universe.y + distY * GameConfig.previewMoveFactor
+	end
+
+	preview.preTouchX = nil
+	preview.preTouchY = nil
+	preview.touch = function(self, event)
+		if ( event.phase == "began" ) then
+			preview.preTouchX = event.x
+			preview.preTouchY = event.y
+			if moveBegin then
+				moveBegin()
+			end
+		elseif ( event.phase == "moved" ) then
+			if moving then
+				moving(event.x-preview.preTouchX, event.y-preview.preTouchY)
+			end
+			preview.preTouchX = event.x
+			preview.preTouchY = event.y
+		elseif ( event.phase == "ended" ) then
+			if moveEnd then
+				moveEnd()
+			end
+		end
+
+		return true
+	end
+	preview:addEventListener("touch", preview)
 
 	return preview
 end
