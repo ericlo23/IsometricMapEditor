@@ -50,7 +50,7 @@ function Editor:toMode(mode)
     elseif mode == Editor.MODE_TILE then
         s = "TILE"
     elseif mode == Editor.MODE_MOVE then
-        s = "MVOE"
+        s = "MOVE"
     else
         print("invalid mode")
         return
@@ -77,6 +77,9 @@ function Editor:initiateCallback()
     -- tile select callback
     self.tileSelectCallback = function()
         local idx = self.tileBox.selectedTileIdx
+        -- if still in move mode
+        self.moveEndCallback()
+
         if self.mode == Editor.MODE_NONE then
             self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
             self:toMode(Editor.MODE_TILE)
@@ -97,6 +100,8 @@ function Editor:initiateCallback()
     -- layer position select callback
     self.posSelectCallback = function(layer, x, y)
         local world = self.preview:getCurrentWorld()
+        -- if still in move mode
+        self.moveEndCallback()
         -- paste tile
         if self.mode == Editor.MODE_TILE then
             local idx = self.tileBox.selectedTileIdx    
@@ -116,6 +121,7 @@ function Editor:initiateCallback()
 
     -- eraser btn
     self.toggleEraser = function()
+        self.moveEndCallback()
         if self.mode == Editor.MODE_ERASER then
             -- disable eraser
             self:disableEraser()
@@ -132,6 +138,7 @@ function Editor:initiateCallback()
     -- move callbacks
     self.preMode = nil
     self.moveBeginCallback = function()
+        self.moveEndCallback()
         self.preMode = self.mode
         self:toMode(Editor.MODE_MOVE)
     end
@@ -294,11 +301,11 @@ local function onMouseEvent(event)
     -- record mouse position
     Editor.mouseX = event.x
     Editor.mouseY = event.y
-    if Editor.mode == Editor.MODE_MOVE and 
-            (event.x == 0 or event.x == GameConfig.contentWidth or 
-             event.y == 0 or event.y == GameConfig.contentHeight) then
+    --[[
+    if Editor.mode == Editor.MODE_MOVE and not event.isPrimaryButtonDown) then
         Editor.moveEndCallback()
     end
+    ]]
     -- scrolling
 	if event.scrollY > 0 then
         Editor.preview:zoomOut()
