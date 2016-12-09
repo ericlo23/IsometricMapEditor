@@ -332,10 +332,9 @@ local function onKeyEvent(event)
         Editor.cursor:removeObjIfExist()
         if Editor.mode == Editor.MODE_ERASER then
             Editor:disableEraser()
-            Editor.mode = Editor.MODE_NONE
         elseif Editor.mode == Editor.MODE_TILE then
             Editor.tileBox:deselectTile()
-            Editor.mode = Editor.MODE_NONE
+            Editor:toMode(Editor.MODE_NONE)
         else
         end
     end

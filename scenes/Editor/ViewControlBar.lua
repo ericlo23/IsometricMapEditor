@@ -25,10 +25,9 @@ ControlBar.new = function(width, height, options)
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
-				if event.phase == "ended" and upCallback then
-					upCallback()
-				end
-
+			if event.phase == "ended" and upCallback then
+				upCallback()
+			end
 		end,
 		shape = "roundedRect",
 		width = bar.gridW,
