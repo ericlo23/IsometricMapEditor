@@ -103,6 +103,7 @@ Preview.new = function(w, h, options)
 	preview.preTouchY = nil
 	preview.touch = function(self, event)
 		if ( event.phase == "began" ) then
+			display.getCurrentStage():setFocus(self)
 			preview.preTouchX = event.x
 			preview.preTouchY = event.y
 			if moveBegin then
@@ -115,6 +116,7 @@ Preview.new = function(w, h, options)
 			preview.preTouchX = event.x
 			preview.preTouchY = event.y
 		elseif ( event.phase == "ended" ) then
+			display.getCurrentStage():setFocus(nil)
 			if moveEnd then
 				moveEnd()
 			end
