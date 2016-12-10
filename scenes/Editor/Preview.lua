@@ -1,5 +1,6 @@
 local GameConfig = require("GameConfig")
 
+local TileInfo = require("TileInfo")
 local World = require("scenes.Editor.World")
 local Universe = require("scenes.Editor.Universe")
 
@@ -60,7 +61,6 @@ Preview.new = function(w, h, options)
 		print("zoom in")
 		local preScale = self.currentScale
 		self.currentScale = self.currentScale + GameConfig.previewScaleStep
-		--self:changeCenterToLayer(self.currentWorld, self.currentLayer)
 		self:changeCenter(self.universe.x, self.universe.y, preScale)
 		self.universe.xScale = self.currentScale
 		self.universe.yScale = self.currentScale
@@ -71,7 +71,6 @@ Preview.new = function(w, h, options)
 		if math.floor(self.currentScale*100) > math.floor(GameConfig.previewScaleStep*100) then
 			local preScale = self.currentScale
 			self.currentScale = self.currentScale - GameConfig.previewScaleStep
-			--self:changeCenterToLayer(self.currentWorld, self.currentLayer)
 			self:changeCenter(self.universe.x, self.universe.y, preScale)
 			self.universe.xScale = self.currentScale
 			self.universe.yScale = self.currentScale
@@ -108,9 +107,21 @@ Preview.new = function(w, h, options)
 	preview:default()
 
 	function preview:move(distX, distY)
-		self.universe.x = self.universe.x + distX * GameConfig.previewMoveFactor
-		self.universe.y = self.universe.y + distY * GameConfig.previewMoveFactor
-		print("universe", self.universe.x, self.universe.y)
+		-- check layer center in bound
+		local x = self.universe.x + distX * GameConfig.previewMoveFactor
+		local y = self.universe.y + distY * GameConfig.previewMoveFactor
+		-- calculate bounds
+		local firstWorld = self.universe[1]
+		local lastWorld = self.universe[self.universe.size]
+		local topBound = -(firstWorld.x+firstWorld.width/2-TileInfo.width/2)*self.currentScale
+		local bottomBound = (lastWorld.x+lastWorld.width/2-TileInfo.width/2)*self.currentScale
+		local leftBound = -(firstWorld.height/2-TileInfo.height/2)*self.currentScale
+		local rightBound = (firstWorld.height/2-TileInfo.height/2)*self.currentScale
+		-- change location if inside bounds
+		if x > topBound and x < bottomBound and y > leftBound and y < rightBound then
+			self.universe.x = x
+			self.universe.y = y
+		end
 	end
 
 	preview.preTouchX = nil
