@@ -13,9 +13,9 @@ TileBase.new = function(options)
         0, TileInfo.height/2,
     }
     local polygon = display.newPolygon( 0, 0, vertices )
-    polygon.fill = {1,1,1,0.3}
+    polygon.fill = {1,1,1,GameConfig.tileBaseAlpha}
     polygon.strokeWidth = 1
-    polygon.stroke = {1, 1, 1, 0.8}
+    polygon.stroke = {1, 1, 1, GameConfig.tileBaseStrokeAlpha}
 
     -- tile center
     local c = display.newCircle(0, 0, 2)

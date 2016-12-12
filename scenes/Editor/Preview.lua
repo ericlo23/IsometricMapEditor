@@ -121,6 +121,17 @@ Preview.new = function(w, h, options)
 		if x > topBound and x < bottomBound and y > leftBound and y < rightBound then
 			self.universe.x = x
 			self.universe.y = y
+			-- set currentLayer as closest layer to center
+			local skyDist= math.abs(self:getCurrentWorld().sky.y*self.currentScale+y)
+			local groundDist = math.abs(self:getCurrentWorld().ground.y*self.currentScale+y)
+			local undergroundDist = math.abs(self:getCurrentWorld().underground.y*self.currentScale+y)
+			if skyDist < groundDist and skyDist < undergroundDist then
+				self.currentLayer = World.LAYER_SKY
+			elseif groundDist < skyDist and groundDist < undergroundDist then
+				self.currentLayer = World.LAYER_GROUND
+			elseif undergroundDist < skyDist and undergroundDist < groundDist then
+				self.currentLayer = World.LAYER_UNDERGROUND
+			end
 		end
 	end
 

@@ -1,9 +1,7 @@
-major
-	scroll with swipe
-	save world status
+swipe_preview
+	
 
-minor
-
+status_manager
 
 
 potential problem

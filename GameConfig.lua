@@ -20,11 +20,14 @@ config.fontSize = 14
 -- Editor layout size
 config.attrTableWidth = config.contentWidth*4/16
 config.attrTableHeight = config.contentHeight
-config.controlBarWidth = config.contentWidth*8/16
+
+config.controlBarWidth = config.contentWidth*12/16
 config.controlBarHeight = 18
 config.controlBtnHeight = 12
-config.previewWidth = config.contentWidth*8/16
+
+config.previewWidth = config.contentWidth*12/16
 config.previewHeight = config.contentHeight-config.controlBarHeight*2
+
 config.tileBoxWidth = config.contentWidth*4/16
 config.tileBoxHeight = config.contentHeight/2
 
@@ -35,7 +38,7 @@ config.cursorOffsetY = 10
 
 -- Preview
 config.previewScale = 0.2
-config.previewScaleStep = config.previewScale / 10
+config.previewScaleStep = config.previewScale / 8
 config.previewOffsetX = 0
 config.previewOffsetY = 0
 config.previewMoveFactor = 1
@@ -47,7 +50,11 @@ config.layerSize = 15
 config.layerOffset = 50
 config.layerDistance = 1000
 
--- Tile box
+-- TileBase
+config.tileBaseAlpha = 0.2
+config.tileBaseStrokeAlpha = 1
+
+-- TileBox
 config.gridWidth = 20
 config.gridHeight = 20
 
