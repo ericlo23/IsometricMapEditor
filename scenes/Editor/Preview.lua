@@ -1,5 +1,6 @@
 local GameConfig = require("GameConfig")
 
+local TileInfo = require("TileInfo")
 local World = require("scenes.Editor.World")
 local Universe = require("scenes.Editor.Universe")
 
@@ -30,7 +31,15 @@ Preview.new = function(w, h, options)
 		self.universe:toggleBoardVisible()
 	end
 
-	function preview:changeCenter(worldIdx, layerIdx)
+	function preview:changeCenter(x, y, preScale)
+		if preScale == 0 then
+			return
+		end
+		self.universe.x = x * self.currentScale / preScale
+		self.universe.y = y * self.currentScale / preScale
+	end
+
+	function preview:changeCenterToLayer(worldIdx, layerIdx)
 		local world = self.universe:getWorld(worldIdx)
 		local layer = nil
 		if layerIdx == World.LAYER_SKY then
@@ -43,25 +52,28 @@ Preview.new = function(w, h, options)
 			print("invalid layer index")
 			return
 		end
-		universe.x = -layer.x * self.currentScale + GameConfig.previewOffsetX
-		universe.y = -layer.y * self.currentScale + GameConfig.previewOffsetY
+		self:changeCenter(-layer.x, -layer.y, 1)
+		self.universe.x  = self.universe.x + GameConfig.previewOffsetX
+		self.universe.y  = self.universe.y + GameConfig.previewOffsetY
 	end
 
 	function preview:zoomIn()
 		print("zoom in")
+		local preScale = self.currentScale
 		self.currentScale = self.currentScale + GameConfig.previewScaleStep
+		self:changeCenter(self.universe.x, self.universe.y, preScale)
 		self.universe.xScale = self.currentScale
 		self.universe.yScale = self.currentScale
-		self:changeCenter(self.currentWorld, self.currentLayer)
 	end
 
 	function preview:zoomOut()
 		print("zoom out")
 		if math.floor(self.currentScale*100) > math.floor(GameConfig.previewScaleStep*100) then
+			local preScale = self.currentScale
 			self.currentScale = self.currentScale - GameConfig.previewScaleStep
+			self:changeCenter(self.universe.x, self.universe.y, preScale)
 			self.universe.xScale = self.currentScale
 			self.universe.yScale = self.currentScale
-			self:changeCenter(self.currentWorld, self.currentLayer)
 		end
 	end
 
@@ -69,7 +81,7 @@ Preview.new = function(w, h, options)
 		print("up")
 		if self.currentLayer < World.LAYER_SKY then
 			self.currentLayer = self.currentLayer + 1
-			self:changeCenter(self.currentWorld, self.currentLayer)
+			self:changeCenterToLayer(self.currentWorld, self.currentLayer)
 		end
 	end
 
@@ -77,7 +89,7 @@ Preview.new = function(w, h, options)
 		print("down")
 		if self.currentLayer > World.LAYER_UNDERGROUND then
 			self.currentLayer = self.currentLayer - 1
-			self:changeCenter(self.currentWorld, self.currentLayer)
+			self:changeCenterToLayer(self.currentWorld, self.currentLayer)
 		end
 	end
 
@@ -86,7 +98,7 @@ Preview.new = function(w, h, options)
 		self.currentScale = GameConfig.previewScale
 		self.currentWorld = 1
 		self.currentLayer = World.LAYER_GROUND
-		self:changeCenter(self.currentWorld, self.currentLayer)
+		self:changeCenterToLayer(self.currentWorld, self.currentLayer)
 		self.universe.xScale = GameConfig.previewScale
 		self.universe.yScale = GameConfig.previewScale
 	end
@@ -95,8 +107,32 @@ Preview.new = function(w, h, options)
 	preview:default()
 
 	function preview:move(distX, distY)
-		self.universe.x = self.universe.x + distX * GameConfig.previewMoveFactor
-		self.universe.y = self.universe.y + distY * GameConfig.previewMoveFactor
+		-- check layer center in bound
+		local x = self.universe.x + distX * GameConfig.previewMoveFactor
+		local y = self.universe.y + distY * GameConfig.previewMoveFactor
+		-- calculate bounds
+		local firstWorld = self.universe[1]
+		local lastWorld = self.universe[self.universe.size]
+		local topBound = -(firstWorld.x+firstWorld.width/2-TileInfo.width/2)*self.currentScale
+		local bottomBound = (lastWorld.x+lastWorld.width/2-TileInfo.width/2)*self.currentScale
+		local leftBound = -(firstWorld.height/2-TileInfo.height/2)*self.currentScale
+		local rightBound = (firstWorld.height/2-TileInfo.height/2)*self.currentScale
+		-- change location if inside bounds
+		if x > topBound and x < bottomBound and y > leftBound and y < rightBound then
+			self.universe.x = x
+			self.universe.y = y
+			-- set currentLayer as closest layer to center
+			local skyDist= math.abs(self:getCurrentWorld().sky.y*self.currentScale+y)
+			local groundDist = math.abs(self:getCurrentWorld().ground.y*self.currentScale+y)
+			local undergroundDist = math.abs(self:getCurrentWorld().underground.y*self.currentScale+y)
+			if skyDist < groundDist and skyDist < undergroundDist then
+				self.currentLayer = World.LAYER_SKY
+			elseif groundDist < skyDist and groundDist < undergroundDist then
+				self.currentLayer = World.LAYER_GROUND
+			elseif undergroundDist < skyDist and undergroundDist < groundDist then
+				self.currentLayer = World.LAYER_UNDERGROUND
+			end
+		end
 	end
 
 	preview.preTouchX = nil

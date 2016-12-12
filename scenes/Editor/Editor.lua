@@ -163,11 +163,13 @@ function Editor:initiateLayout()
 	self.universalGroup.x = display.contentCenterX
 	self.universalGroup.y = display.contentCenterY
 
+    --[[
 	self.attrTable = widget.newTableView({
 		id="attr_table",
 		width = GameConfig.attrTableWidth,
 		height = GameConfig.attrTableHeight
 	})
+    ]]
 
     self.EditControlBar = EditControlBar.new(
         GameConfig.controlBarWidth,
@@ -209,11 +211,13 @@ function Editor:initiateLayout()
         }
 	)
 
+    --[[
 	-- left part
 	self.leftGroup = display.newGroup()
 	self.attrTable.x = 0
 	self.attrTable.y = 0
 	self.leftGroup:insert(self.attrTable)
+    ]]
 
 	-- middle part
 	self.middleGroup = display.newGroup()
@@ -233,7 +237,7 @@ function Editor:initiateLayout()
 	self.tileBox.y = -(GameConfig.contentHeight-GameConfig.tileBoxHeight)/2
 	self.rightGroup:insert(self.tileBox)
 
-	self.universalGroup:insert(self.leftGroup)
+	--self.universalGroup:insert(self.leftGroup)
 	self.universalGroup:insert(self.middleGroup)
 	self.universalGroup:insert(self.rightGroup)
 	self.universalGroup:resize()
@@ -301,11 +305,6 @@ local function onMouseEvent(event)
     -- record mouse position
     Editor.mouseX = event.x
     Editor.mouseY = event.y
-    --[[
-    if Editor.mode == Editor.MODE_MOVE and not event.isPrimaryButtonDown) then
-        Editor.moveEndCallback()
-    end
-    ]]
     -- scrolling
 	if event.scrollY > 0 then
         Editor.preview:zoomOut()
