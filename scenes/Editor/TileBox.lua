@@ -33,59 +33,58 @@ TileBox.new = function(maxW, maxH, layout, options)
     local tileBox = widget.newScrollView(options)
     local tiles = {}
     local size = 0
-    local selectedTileIdx = -1
+    local selectedTileName = nil
 
     function tileBox:deselectTile()
-        print("deselect:", self.selectedTileIdx)
-        self.tiles[self.selectedTileIdx].selectRegion.alpha = 0
-        self.selectedTileIdx = -1
+        print("deselect:", self.selectedTileName)
+        self.tiles[self.selectedTileName].selectRegion.alpha = 0
+        self.selectedTileName = nil
     end
 
-    function tileBox:selectTile(idx)
-        print("select:", idx)
-        self.selectedTileIdx = idx
-        self.tiles[self.selectedTileIdx].selectRegion.alpha = 0.3
+    function tileBox:selectTile(name)
+        print("select:", name)
+        self.selectedTileName = name
+        self.tiles[self.selectedTileName].selectRegion.alpha = 0.3
     end
 
-    function tileBox:chooseTile(idx)
-        if self.selectedTileIdx ~= idx then
-            if self.selectedTileIdx ~= -1 then
+    function tileBox:chooseTile(name)
+        if self.selectedTileName ~= name then
+            if self.selectedTileName ~= nil then
                 self:deselectTile()
             end
-            self:selectTile(idx)
+            self:selectTile(name)
         else
             self:deselectTile()
         end
     end
 
     -- load isotiles
-    for i = 1, #(isotiles.sheet.frames) do
-        size = size + 1
-        local name = tostring(i)
+    for name, idx in pairs(isotiles.frameIndex) do
+        size = size+1
         local scale = GameConfig.gridWidth / TileInfo.baseWidth
-        tiles[size] = display.newGroup()
-        tiles[size].sprite = TileSprite.new("isotiles", name)
-        tiles[size].sprite.y = 3
-        tiles[size].sprite.xScale = scale
-        tiles[size].sprite.yScale = scale
-        tiles[size].idx = size
+        tiles[name] = display.newGroup()
+        tiles[name].sprite = TileSprite.new("isotiles", name)
+        tiles[name].sprite.y = 3
+        tiles[name].sprite.xScale = scale
+        tiles[name].sprite.yScale = scale
+        tiles[name].name = name
         local rect = display.newRoundedRect(0, 0, GameConfig.gridWidth, GameConfig.gridHeight, 2)
         rect.fill = {1,0,0}
         rect.alpha = 0
-        tiles[size].selectRegion = rect
+        tiles[name].selectRegion = rect
         local function tapListener(self, event)
             if ( event.numTaps == 1 ) then
-                tileBox:chooseTile(self.idx)
+                tileBox:chooseTile(self.name)
                 if callback then
                     callback()
                 end
                 return true
             end
         end
-        tiles[size].tap = tapListener
-        tiles[size]:addEventListener( "tap", tiles[size] )
-        tiles[size]:insert(tiles[size].sprite)
-        tiles[size]:insert(rect)
+        tiles[name].tap = tapListener
+        tiles[name]:addEventListener( "tap", tiles[name] )
+        tiles[name]:insert(tiles[name].sprite)
+        tiles[name]:insert(rect)
     end
 
     -- calculate proper layout
@@ -111,10 +110,12 @@ TileBox.new = function(maxW, maxH, layout, options)
         print("container is nil")
         return nil
     end
-    for i = 1, size do
+    local i = 0
+    for name, tile in pairs(tiles) do
+        i = i+1
         local x = math.floor((i-1)/numCols)+1
         local y = i-(x-1)*numCols
-        container:insertAt(tiles[i], x, y)
+        container:insertAt(tiles[name], x, y)
     end
 
     container.x = maxW/2
@@ -123,7 +124,7 @@ TileBox.new = function(maxW, maxH, layout, options)
 
     tileBox.tiles = tiles
     tileBox.size = size
-    tileBox.selectedTileIdx = selectedTileIdx
+    tileBox.selectedTileName = selectedTileName
 
     return tileBox
 end

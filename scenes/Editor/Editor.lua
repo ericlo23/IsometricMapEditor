@@ -9,6 +9,8 @@ local TileBox = require("scenes.Editor.TileBox")
 local TileBase = require("scenes.Editor.TileBase")
 local Cursor = require("ui.Cursor")
 
+local Action = require("scenes.Editor.Action")
+
 local Layer = require("scenes.Editor.Layer")
 local GameConfig = require("GameConfig")
 local LinearGroup = require("ui.LinearGroup")
@@ -76,44 +78,68 @@ function Editor:initiateCallback()
 
     -- tile select callback
     self.tileSelectCallback = function()
-        local idx = self.tileBox.selectedTileIdx
+        local name = self.tileBox.selectedTileName
         -- if still in move mode
         self.moveEndCallback()
 
         if self.mode == Editor.MODE_NONE then
-            self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+            self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
             self:toMode(Editor.MODE_TILE)
         elseif self.mode == Editor.MODE_TILE then
             self.cursor:removeObjIfExist()
-            if idx ~= -1 then
-                self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+            if name ~= nil then
+                self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
             else
                 self:toMode(Editor.MODE_NONE)
             end
         elseif self.mode == Editor.MODE_ERASER then
             self:disableEraser()
-            self.cursor:setObj(TileSprite.new("isotiles", tostring(idx)), self.mouseX, self.mouseY)
+            self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
             self:toMode(Editor.MODE_TILE)
         end
     end
 
     -- layer position select callback
-    self.posSelectCallback = function(layer, x, y)
-        local world = self.preview:getCurrentWorld()
+    self.posSelectCallback = function(layerId, x, y)
         -- if still in move mode
         self.moveEndCallback()
         -- paste tile
+        local world = self.preview:getCurrentWorld()
         if self.mode == Editor.MODE_TILE then
-            local idx = self.tileBox.selectedTileIdx    
-            local oldSprite = world[layer].tiles[x][y].sprite
-            if not oldSprite or (oldSprite and oldSprite.name ~= tostring(idx)) then
-                local tile = TileSprite.new("isotiles", tostring(idx))
-                world[layer]:setTileAt(tile, x, y)
+            local name = self.tileBox.selectedTileName
+            local oldSprite = world[layerId].tiles[x][y].sprite
+            if not oldSprite or (oldSprite and oldSprite.name ~= name) then
+                local action = Action.new(
+                    Action.TYPE_PASTE_TILE,
+                    world,
+                    layerId,
+                    x, 
+                    y,
+                    "isotiles",
+                    name
+                )
+                Action.todo(action)
+
+                --local tile = TileSprite.new("isotiles", name)
+                --world[layerId]:setTileAt(tile, x, y)
             end
             return true
         -- clean tile
         elseif self.mode == Editor.MODE_ERASER then
-            world[layer]:cleanAt(x, y)
+            local sprite = world[layerId]:getTileAt(x, y).sprite
+            if sprite then
+                local action = Action.new(
+                    Action.TYPE_CLEAN_TILE,
+                    world,
+                    layerId,
+                    x, 
+                    y,
+                    sprite.tag,                    
+                    sprite.name
+                )
+                Action.todo(action)
+            end
+            --world[layerId]:cleanAt(x, y)
             return true
         end
         return false
@@ -252,15 +278,16 @@ function Editor:show( event )
     if ( phase == "will" ) then
         -- mode
         self:toMode(Editor.MODE_NONE)
+        
+        self:initiateCallback() -- should be called before initiateLayout
+		
+        self:initiateLayout()
+
         -- cursor
         self.cursor = Cursor.new()
         self.mouseX = GameConfig.contentCenterX
         self.mouseY = GameConfig.contentCenterY
         sceneGroup:insert(self.cursor)
-
-        self:initiateCallback() -- should be called before initiateLayout
-		
-        self:initiateLayout()
 
     elseif ( phase == "did" ) then
 

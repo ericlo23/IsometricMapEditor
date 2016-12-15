@@ -80,6 +80,10 @@ Layer.new = function(text, options)
 		end
 	end
 
+	function layer:getTileAt(i, j)
+		return self.tiles[i][j]
+	end
+
 	function layer:setTileAt(o, i, j)
 		local t = self.tiles[i][j]
 		if t.sprite then

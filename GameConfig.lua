@@ -37,8 +37,8 @@ config.cursorOffsetX = 15
 config.cursorOffsetY = 10
 
 -- Preview
-config.previewScale = 0.2
-config.previewScaleStep = config.previewScale / 8
+config.previewScale = 0.15
+config.previewScaleStep = config.previewScale / 10
 config.previewOffsetX = 0
 config.previewOffsetY = 0
 config.previewMoveFactor = 1
@@ -46,9 +46,9 @@ config.previewMoveFactor = 1
 -- Universe
 config.boardAlpha = 1
 config.worldDistance = 100
-config.layerSize = 15
+config.layerSize = 20
 config.layerOffset = 50
-config.layerDistance = 1000
+config.layerDistance = 1200	
 
 -- TileBase
 config.tileBaseAlpha = 0.2

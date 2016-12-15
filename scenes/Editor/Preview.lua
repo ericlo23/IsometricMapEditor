@@ -24,7 +24,7 @@ Preview.new = function(w, h, options)
 	preview:insert(universe)
 
 	function preview:getCurrentWorld()
-		return self.universe:getWorld(self.currentWorld)
+		return self.universe:getWorld(self.currentWorldId)
 	end
 
 	function preview:toggleBoardVisible()
@@ -81,7 +81,7 @@ Preview.new = function(w, h, options)
 		print("up")
 		if self.currentLayer < World.LAYER_SKY then
 			self.currentLayer = self.currentLayer + 1
-			self:changeCenterToLayer(self.currentWorld, self.currentLayer)
+			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
 
@@ -89,16 +89,16 @@ Preview.new = function(w, h, options)
 		print("down")
 		if self.currentLayer > World.LAYER_UNDERGROUND then
 			self.currentLayer = self.currentLayer - 1
-			self:changeCenterToLayer(self.currentWorld, self.currentLayer)
+			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
 
 	function preview:default()
 		print("default")
 		self.currentScale = GameConfig.previewScale
-		self.currentWorld = 1
+		self.currentWorldId = 1
 		self.currentLayer = World.LAYER_GROUND
-		self:changeCenterToLayer(self.currentWorld, self.currentLayer)
+		self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		self.universe.xScale = GameConfig.previewScale
 		self.universe.yScale = GameConfig.previewScale
 	end

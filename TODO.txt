@@ -1,8 +1,7 @@
-swipe_preview
-	
-
-status_manager
-
+state_manager
+	undo, redo
+		history size
+		buttons
 
 potential problem
 	tile sprite's name
