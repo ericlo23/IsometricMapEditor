@@ -370,6 +370,12 @@ local function onKeyEvent(event)
             Editor:toMode(Editor.MODE_NONE)
         else
         end
+    elseif event.isCtrlDown and event.keyName == "z" and event.phase == "up" then
+        Action.undo()
+    elseif ((event.isCtrlDown and event.keyName == "y") or
+            (event.isCtrlDown and event.isShiftDown and event.keyName == "z")) and 
+            event.phase == "up" then
+        Action.redo()
     end
 end
 Runtime:addEventListener("key", onKeyEvent)
