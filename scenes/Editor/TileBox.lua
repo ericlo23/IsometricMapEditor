@@ -1,5 +1,6 @@
 local widget = require("widget")
 
+local MarginGroup = require("ui.MarginGroup")
 local GridContainer = require("ui.GridContainer")
 
 local GameConfig = require("GameConfig")
@@ -14,8 +15,19 @@ TileBox.LAYOUT_HORIZONTAL = 0
 TileBox.LAYOUT_VERTICAL = 1
 
 TileBox.new = function(maxW, maxH, layout, options)
-    local gapSize = options and options.gapSize or 0
     local callback = options and options.callback or nil
+    local gapSize = options and options.gapSize or 0
+    local marginSize = options and options.marginSize or 0
+    local tileBox = MarginGroup.new(
+        maxW,
+        maxH,
+        {
+            marginSize = marginSize,
+            marginColor = {1,1,1,0}
+        }
+    )
+    maxW = maxW - marginSize*2
+    maxH = maxH - marginSize*2
     local options = {
         width = maxW,
         height = maxH,
@@ -29,8 +41,7 @@ TileBox.new = function(maxW, maxH, layout, options)
         print("layout is invalid")
         return nil
     end
-
-    local tileBox = widget.newScrollView(options)
+    
     local tiles = {}
     local size = 0
     local selectedTileName = nil
@@ -120,7 +131,13 @@ TileBox.new = function(maxW, maxH, layout, options)
 
     container.x = maxW/2
     container.y = container.realH/2
-    tileBox:insert(container)
+    local scoller = widget.newScrollView(options)
+    scoller:insert(container)
+
+    scoller.x = 0
+    scoller.y = 0
+
+    tileBox:insert(scoller)
 
     tileBox.tiles = tiles
     tileBox.size = size

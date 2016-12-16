@@ -1,5 +1,6 @@
 local widget = require("widget")
 
+local MarginGroup = require("ui.MarginGroup")
 local GridContainer = require("ui.GridContainer")
 
 local GameConfig = require("GameConfig")
@@ -11,13 +12,23 @@ ControlBar.new = function(width, height, options)
 	local downCallback = options and options.downCallback or nil
 	local defaultCallback = options and options.defaultCallback or nil
 	local visibleCallback = options and options.visibleCallback or nil
+	local marginSize = options and options.marginSize or 0
 
-	local bar = GridContainer.new({
-		maxW = width,
-		maxH = height,
+	local bar = MarginGroup.new(
+		width,
+		height,
+		{
+			marginSize = marginSize,
+			marginColor = GameConfig.marginColor
+		}
+	)
+
+	local container = GridContainer.new({
+		maxW = width-2*marginSize,
+		maxH = height-2*marginSize,
 		rows = 1,
 		cols = 5,
-		gapSize = 1
+		gapSize = 2
 	})
 
 	bar.btnUp = widget.newButton({
@@ -29,9 +40,9 @@ ControlBar.new = function(width, height, options)
 				upCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnDown = widget.newButton({
@@ -43,9 +54,9 @@ ControlBar.new = function(width, height, options)
 				downCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnDefault = widget.newButton({
@@ -57,9 +68,9 @@ ControlBar.new = function(width, height, options)
 				defaultCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnVisible = widget.newButton({
@@ -71,17 +82,19 @@ ControlBar.new = function(width, height, options)
 				visibleCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	
 	--bar:insertAt(nil, 1, 1)
-	bar:insertAt(bar.btnDown, 1, 2)
-	bar:insertAt(bar.btnDefault, 1, 3)
-	bar:insertAt(bar.btnUp, 1, 4)
-	bar:insertAt(bar.btnVisible, 1, 5)
+	container:insertAt(bar.btnDown, 1, 2)
+	container:insertAt(bar.btnDefault, 1, 3)
+	container:insertAt(bar.btnUp, 1, 4)
+	container:insertAt(bar.btnVisible, 1, 5)
+
+	bar:insert(container)
 
 	return bar
 end

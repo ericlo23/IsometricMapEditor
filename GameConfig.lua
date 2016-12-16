@@ -17,19 +17,16 @@ config.scaleFactor =  config.contentHeight / config.basicHeight
 
 config.fontSize = 14
 
--- Editor layout size
+-- Editor layout 
 config.attrTableWidth = config.contentWidth*4/16
 config.attrTableHeight = config.contentHeight
-
 config.controlBarWidth = config.contentWidth*12/16
 config.controlBarHeight = 18
-config.controlBtnHeight = 12
-
 config.previewWidth = config.contentWidth*12/16
 config.previewHeight = config.contentHeight-config.controlBarHeight*2
-
 config.tileBoxWidth = config.contentWidth*4/16
 config.tileBoxHeight = config.contentHeight/2
+config.marginColor = {1,1,1,0}
 
 -- Cursor
 config.cursorWidth = 16

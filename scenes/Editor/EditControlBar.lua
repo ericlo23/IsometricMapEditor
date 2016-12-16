@@ -1,5 +1,6 @@
 local widget = require("widget")
 
+local MarginGroup = require("ui.MarginGroup")
 local GridContainer = require("ui.GridContainer")
 
 local GameConfig = require("GameConfig")
@@ -12,13 +13,23 @@ ControlBar.new = function(width, height, options)
 	local loadCallback = options and options.loadCallback or nil
 	local undoCallback = options and options.undoCallback or nil
 	local redoCallback = options and options.redoCallback or nil
+	local marginSize = options and options.marginSize or 0
 
-	local bar = GridContainer.new({
-		maxW = width,
-		maxH = height,
+	local bar = MarginGroup.new(
+		width,
+		height,
+		{
+			marginSize = marginSize,
+			marginColor = GameConfig.marginColor
+		}
+	)
+
+	local container = GridContainer.new({
+		maxW = width-2*marginSize,
+		maxH = height-2*marginSize,
 		rows = 1,
 		cols = 5,
-		gapSize = 1
+		gapSize = 2
 	})
 
 	bar.btnSave = widget.newButton({
@@ -30,9 +41,9 @@ ControlBar.new = function(width, height, options)
 				saveCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 
@@ -45,9 +56,9 @@ ControlBar.new = function(width, height, options)
 				loadCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 
@@ -60,9 +71,9 @@ ControlBar.new = function(width, height, options)
 				undoCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 
@@ -75,9 +86,9 @@ ControlBar.new = function(width, height, options)
 				redoCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 
@@ -90,17 +101,19 @@ ControlBar.new = function(width, height, options)
 				eraserCallback()
 			end
 		end,
-		shape = "roundedRect",
-		width = bar.gridW,
-		height = GameConfig.controlBtnHeight,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	
-	bar:insertAt(bar.btnSave, 1, 1)
-	bar:insertAt(bar.btnLoad, 1, 2)
-	bar:insertAt(bar.btnUndo, 1, 3)
-	bar:insertAt(bar.btnRedo, 1, 4)
-	bar:insertAt(bar.btnEraser, 1, 5)
+	container:insertAt(bar.btnSave, 1, 1)
+	container:insertAt(bar.btnLoad, 1, 2)
+	container:insertAt(bar.btnUndo, 1, 3)
+	container:insertAt(bar.btnRedo, 1, 4)
+	container:insertAt(bar.btnEraser, 1, 5)
+
+	bar:insert(container)
 
 	return bar
 end

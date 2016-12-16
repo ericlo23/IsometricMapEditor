@@ -205,7 +205,8 @@ function Editor:initiateLayout()
             loadCallback = nil,
             undoCallback = Action.undo,
             redoCallback = Action.redo,
-            eraserCallback = self.toggleEraser
+            eraserCallback = self.toggleEraser,
+            marginSize = 2
         }
     )
 
@@ -228,6 +229,7 @@ function Editor:initiateLayout()
             downCallback = self.previewDown,
             defaultCallback = self.previewDefault,
             visibleCallback = self.previewEraser,
+            marginSize = 2
         }
     )
 
@@ -237,6 +239,7 @@ function Editor:initiateLayout()
 		TileBox.LAYOUT_VERTICAL,
         {
             gapSize = 3,
+            marginSize = 2,
             callback = self.tileSelectCallback
         }
 	)
