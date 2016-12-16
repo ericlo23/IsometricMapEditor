@@ -18,7 +18,7 @@ Action.add = function(action)
 	end
 	Action.currentIdx = Action.currentIdx+1
 	Action.list[Action.currentIdx] = action
-	print("action list size:", #Action.list)
+	--print("action list size:", #Action.list)
 end
 
 Action.exec = function(action)
@@ -31,14 +31,14 @@ Action.exec = function(action)
 end
 
 Action.reverse = function(action)
-	local type = None
+	local t = None
 	if action.type == Action.TYPE_CLEAN_TILE then
-		type = Action.TYPE_PASTE_TILE
+		t = Action.TYPE_PASTE_TILE
 	elseif action.type == Action.TYPE_PASTE_TILE then
-		type = Action.TYPE_CLEAN_TILE
+		t = Action.TYPE_CLEAN_TILE
 	end
 	return Action.new(
-		type, 
+		t, 
 		action.world, 
 		action.layerId, 
 		action.posX, 
@@ -54,8 +54,12 @@ Action.todo = function(action)
 end
 
 Action.undo = function()
-	Action.currentIdx = Action.currentIdx-1
+	if Action.currentIdx == 0 then
+		print("no action can be undo")
+		return
+	end
 	Action.exec(Action.reverse(Action.list[Action.currentIdx]))
+	Action.currentIdx = Action.currentIdx-1
 end
 
 Action.redo = function()

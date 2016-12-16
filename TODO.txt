@@ -1,7 +1,8 @@
 state_manager
+	state manager
+		tables
 	undo, redo
 		history size
-		buttons
 
 potential problem
 	tile sprite's name

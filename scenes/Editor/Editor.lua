@@ -201,6 +201,10 @@ function Editor:initiateLayout()
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight,
         {
+            saveCallback = nil,
+            loadCallback = nil,
+            undoCallback = Action.undo,
+            redoCallback = Action.redo,
             eraserCallback = self.toggleEraser
         }
     )
