@@ -8,6 +8,8 @@ local TileSprite = require("sprites.TileSprite")
 local TileBox = require("scenes.Editor.TileBox")
 local TileBase = require("scenes.Editor.TileBase")
 local Cursor = require("ui.Cursor")
+local StateManager = require("scenes.Editor.StateManager")
+local World = require("scenes.Editor.World")
 
 local Action = require("scenes.Editor.Action")
 
@@ -41,7 +43,7 @@ end
 
 function Editor:toMode(mode)
     if mode == self.mode then
-        print("stay same mode")
+        print("stay at same mode")
         return
     end
     local s = nil
@@ -72,7 +74,7 @@ function Editor:initiateCallback()
     self.previewDefault = function()
         self.preview:default()
     end
-    self.previewEraser = function()
+    self.previewVisible = function()
         self.preview:toggleBoardVisible()
     end
 
@@ -100,11 +102,10 @@ function Editor:initiateCallback()
     end
 
     -- layer position select callback
-    self.posSelectCallback = function(layerId, x, y)
+    self.posSelectCallback = function(world, layerId, x, y)
         -- if still in move mode
         self.moveEndCallback()
         -- paste tile
-        local world = self.preview:getCurrentWorld()
         if self.mode == Editor.MODE_TILE then
             local name = self.tileBox.selectedTileName
             local oldSprite = world[layerId].tiles[x][y].sprite
@@ -181,6 +182,14 @@ function Editor:initiateCallback()
         end
     end
 
+    -- new world callback
+    self.newWorldCallback = function()
+        local universe = self.preview.universe
+        local world = World.new({name = tostring(self.preview.universe.size+1), callback = self.posSelectCallback})
+        universe:addWorld(world)
+        self.preview:default(universe.size)
+    end
+
 end
 
 function Editor:initiateLayout()
@@ -188,14 +197,6 @@ function Editor:initiateLayout()
 	self.universalGroup = LinearGroup.new()
 	self.universalGroup.x = display.contentCenterX
 	self.universalGroup.y = display.contentCenterY
-
-    --[[
-	self.attrTable = widget.newTableView({
-		id="attr_table",
-		width = GameConfig.attrTableWidth,
-		height = GameConfig.attrTableHeight
-	})
-    ]]
 
     self.EditControlBar = EditControlBar.new(
         GameConfig.controlBarWidth,
@@ -205,6 +206,8 @@ function Editor:initiateLayout()
             loadCallback = nil,
             undoCallback = Action.undo,
             redoCallback = Action.redo,
+            newWorldCallback = self.newWorldCallback,
+            visibleCallback = self.previewVisible,
             eraserCallback = self.toggleEraser,
             marginSize = 2
         }
@@ -214,7 +217,6 @@ function Editor:initiateLayout()
         GameConfig.previewWidth,
         GameConfig.previewHeight,
         {
-            callback = self.posSelectCallback,
             moveBegin = self.moveBeginCallback,
             moving = self.movingCallback,
             moveEnd = self.moveEndCallback
@@ -228,7 +230,6 @@ function Editor:initiateLayout()
             upCallback = self.previewUp,
             downCallback = self.previewDown,
             defaultCallback = self.previewDefault,
-            visibleCallback = self.previewEraser,
             marginSize = 2
         }
     )
@@ -243,14 +244,6 @@ function Editor:initiateLayout()
             callback = self.tileSelectCallback
         }
 	)
-
-    --[[
-	-- left part
-	self.leftGroup = display.newGroup()
-	self.attrTable.x = 0
-	self.attrTable.y = 0
-	self.leftGroup:insert(self.attrTable)
-    ]]
 
 	-- middle part
 	self.middleGroup = display.newGroup()
@@ -286,9 +279,14 @@ function Editor:show( event )
         -- mode
         self:toMode(Editor.MODE_NONE)
         
+        -- layouts
         self:initiateCallback() -- should be called before initiateLayout
-		
         self:initiateLayout()
+
+        -- load universe state
+        StateManager:initial(self.preview.universe)
+        StateManager:loadLast()
+        self.preview:default()
 
         -- cursor
         self.cursor = Cursor.new()

@@ -42,7 +42,7 @@ config.previewMoveFactor = 1
 
 -- Universe
 config.boardAlpha = 1
-config.worldDistance = 100
+config.worldDistance = 200
 config.layerSize = 20
 config.layerOffset = 50
 config.layerDistance = 1200	

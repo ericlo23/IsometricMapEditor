@@ -13,19 +13,19 @@ World.new = function(options)
 	local boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
 	world.name = options and options.name or "default"
 
-	local sky = Layer.new("sky", options)
+	local sky = Layer.new("sky", world, options)
 	sky.x = 0
 	sky.y = -GameConfig.layerDistance
 	world:insert(sky)
 	world.sky = sky
 
-	local ground = Layer.new("ground", options)
+	local ground = Layer.new("ground", world, options)
 	ground.x = 0
 	ground.y = 0
 	world:insert(ground)
 	world.ground = ground
 
-	local underground = Layer.new("underground", options)
+	local underground = Layer.new("underground", world, options)
 	underground.x = 0
 	underground.y = GameConfig.layerDistance
 	world:insert(underground)

@@ -8,11 +8,14 @@ local GameConfig = require("GameConfig")
 local ControlBar = {}
 
 ControlBar.new = function(width, height, options)
-	local eraserCallback = options and options.eraserCallback or nil
 	local saveCallback = options and options.saveCallback or nil
 	local loadCallback = options and options.loadCallback or nil
 	local undoCallback = options and options.undoCallback or nil
 	local redoCallback = options and options.redoCallback or nil
+	local newWorldCallback = options and options.newWorldCallback or nil
+	local visibleCallback = options and options.visibleCallback or nil
+	local eraserCallback = options and options.eraserCallback or nil
+	
 	local marginSize = options and options.marginSize or 0
 
 	local bar = MarginGroup.new(
@@ -28,7 +31,7 @@ ControlBar.new = function(width, height, options)
 		maxW = width-2*marginSize,
 		maxH = height-2*marginSize,
 		rows = 1,
-		cols = 5,
+		cols = 7,
 		gapSize = 2
 	})
 
@@ -92,6 +95,21 @@ ControlBar.new = function(width, height, options)
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 
+	bar.btnNewWorld = widget.newButton({
+		label="NewWorld",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if newWorldCallback and event.phase == "ended" then
+				newWorldCallback()
+			end
+		end,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
+
 	bar.btnEraser = widget.newButton({
 		label="Eraser",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
@@ -106,12 +124,29 @@ ControlBar.new = function(width, height, options)
 		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
+
+	bar.btnVisible = widget.newButton({
+		label="Visible",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" and visibleCallback then
+				visibleCallback()
+			end
+		end,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
 	
 	container:insertAt(bar.btnSave, 1, 1)
 	container:insertAt(bar.btnLoad, 1, 2)
 	container:insertAt(bar.btnUndo, 1, 3)
 	container:insertAt(bar.btnRedo, 1, 4)
-	container:insertAt(bar.btnEraser, 1, 5)
+	container:insertAt(bar.btnNewWorld, 1, 5)
+	container:insertAt(bar.btnVisible, 1, 6)
+	container:insertAt(bar.btnEraser, 1, 7)
 
 	bar:insert(container)
 

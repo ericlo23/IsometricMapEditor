@@ -25,9 +25,10 @@ n: numbers
 	--size---
 ]]
 
-Layer.new = function(text, options)
+Layer.new = function(text, world, options)
 	local layer = display.newGroup()
 	layer.id = text
+	layer.world = world
 	layer.callback = options and options.callback or nil
 	layer.tiles = {}
 	layer.boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
@@ -59,7 +60,7 @@ Layer.new = function(text, options)
 			local function touchListener(self, event)
 				--print("touch on: "..i..","..j)
 				if self.callback then
-					return self.callback(layer.id, i, j)
+					return self.callback(world, layer.id, i, j)
 				end
 				return true
 			end
@@ -91,7 +92,7 @@ Layer.new = function(text, options)
 			t:remove(t.sprite)
 			t.sprite = nil
 		end
-		print("paste tile at", self.id, "("..i..", "..j..")")
+		print("paste tile at world", self.world.name, self.id, "("..i..", "..j..")")
 		o.x = 0
 		o.y = 0
 		t.sprite = o

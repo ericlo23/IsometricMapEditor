@@ -1,8 +1,20 @@
 state_manager
 	state manager
-		tables
+		universe tables
+		save table
+	tile box
+		tab view
+		sort
 	undo, redo
 		history size
+	add world
+		change world btn
+		remove world 
+			btn
+			logic
+		*current world logic
+		*swipe preview fix 
+		*world distance
+		
 
-potential problem
-	tile sprite's name
+	status bar

@@ -13,7 +13,7 @@ Universe.new = function()
 		self.size = self.size + 1
 		universe.worlds[self.size] = world
 		-- set world's position
-		world.x = (self.size-1) * world.width
+		world.x = (self.size-1) * (world.width + GameConfig.worldDistance)
 		world.y = 0
 		self:insert(world)
 	end

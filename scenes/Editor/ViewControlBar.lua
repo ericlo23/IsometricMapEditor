@@ -11,7 +11,6 @@ ControlBar.new = function(width, height, options)
 	local upCallback = options and options.upCallback or nil
 	local downCallback = options and options.downCallback or nil
 	local defaultCallback = options and options.defaultCallback or nil
-	local visibleCallback = options and options.visibleCallback or nil
 	local marginSize = options and options.marginSize or 0
 
 	local bar = MarginGroup.new(
@@ -32,7 +31,7 @@ ControlBar.new = function(width, height, options)
 	})
 
 	bar.btnUp = widget.newButton({
-		label="UP",
+		label="Up",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
@@ -46,7 +45,7 @@ ControlBar.new = function(width, height, options)
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnDown = widget.newButton({
-		label="DOWN",
+		label="Down",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
@@ -60,7 +59,7 @@ ControlBar.new = function(width, height, options)
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	bar.btnDefault = widget.newButton({
-		label="DEFAULT",
+		label="Default",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
 		fontSize = 10,
 		onEvent = function(event)
@@ -73,26 +72,12 @@ ControlBar.new = function(width, height, options)
 		height = container.gridH,
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
-	bar.btnVisible = widget.newButton({
-		label="VISIBLE",
-		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
-		onEvent = function(event)
-			if event.phase == "ended" and visibleCallback then
-				visibleCallback()
-			end
-		end,
-		shape = "rect",
-		width = container.gridW,
-		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
-	})
 	
 	--bar:insertAt(nil, 1, 1)
 	container:insertAt(bar.btnDown, 1, 2)
 	container:insertAt(bar.btnDefault, 1, 3)
 	container:insertAt(bar.btnUp, 1, 4)
-	container:insertAt(bar.btnVisible, 1, 5)
+	--container:insertAt(, 1, 5)
 
 	bar:insert(container)
 
