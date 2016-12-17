@@ -196,6 +196,15 @@ function Editor:initiateCallback()
         self.preview:default(universe.size)
     end
 
+    self.delWorldCallback = function()
+        local universe = self.preview.universe
+        local target = self.preview.currentWorldId
+        if target == self.preview.universe.size then
+            self.preview:left()
+        end
+        universe:removeWorld(target)
+    end
+
 end
 
 function Editor:initiateLayout()
@@ -213,6 +222,7 @@ function Editor:initiateLayout()
             undoCallback = Action.undo,
             redoCallback = Action.redo,
             newWorldCallback = self.newWorldCallback,
+            delWorldCallback = self.delWorldCallback,
             visibleCallback = self.previewVisible,
             eraserCallback = self.toggleEraser,
             marginSize = 2

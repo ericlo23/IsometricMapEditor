@@ -9,6 +9,21 @@ Universe.new = function()
 	universe.worlds = {}
 	universe.size = 0
 
+	function universe:removeWorld(idx)
+		if idx < 1 or idx > self.size then
+			return
+		end
+		for  i = idx, self.size-1 do
+			self.worlds[i+1].x = self.worlds[i].x
+		end
+		self:remove(self.worlds[idx])
+		for  i = idx, self.size-1 do
+			self.worlds[i] = self.worlds[i+1]
+		end
+		self.worlds[self.size] = nil
+		self.size = self.size - 1
+	end
+
 	function universe:addWorld(world)
 		self.size = self.size + 1
 		universe.worlds[self.size] = world
