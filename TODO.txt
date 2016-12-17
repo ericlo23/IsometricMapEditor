@@ -4,19 +4,14 @@ state_manager
 		save table
 
 misc
+	load
+		load list
 	tile box
 		tab view
 		sort
 	undo, redo
-		history size
-	add world
-		remove world 
-			btn
-			logic
-		*change world btn
-		*current world logic
-		*swipe preview fix 
-		*world distance
-		
+		history control
+	remove world
+		confrim	
 	status bar
 		total worlds, current world, current layer

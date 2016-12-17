@@ -204,7 +204,6 @@ function Editor:initiateCallback()
         end
         universe:removeWorld(target)
     end
-
 end
 
 function Editor:initiateLayout()
@@ -305,7 +304,6 @@ function Editor:show( event )
         StateManager:initial(self.preview.universe)
         StateManager:loadLast()
         self.preview:default()
-        self.newWorldCallback()
 
         -- cursor
         self.cursor = Cursor.new()
