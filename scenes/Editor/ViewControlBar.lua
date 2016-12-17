@@ -11,6 +11,9 @@ ControlBar.new = function(width, height, options)
 	local upCallback = options and options.upCallback or nil
 	local downCallback = options and options.downCallback or nil
 	local defaultCallback = options and options.defaultCallback or nil
+	local leftCallback = options and options.leftCallback or nil
+	local rightCallback = options and options.rightCallback or nil
+
 	local marginSize = options and options.marginSize or 0
 
 	local bar = MarginGroup.new(
@@ -30,6 +33,34 @@ ControlBar.new = function(width, height, options)
 		gapSize = 2
 	})
 
+	bar.btnLeft = widget.newButton({
+		label="Left",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" and leftCallback then
+				leftCallback()
+			end
+		end,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
+	bar.btnRight = widget.newButton({
+		label="Right",
+		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
+		fontSize = 10,
+		onEvent = function(event)
+			if event.phase == "ended" and rightCallback then
+				rightCallback()
+			end
+		end,
+		shape = "rect",
+		width = container.gridW,
+		height = container.gridH,
+		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+	})
 	bar.btnUp = widget.newButton({
 		label="Up",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
@@ -73,11 +104,11 @@ ControlBar.new = function(width, height, options)
 		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
 	})
 	
-	--bar:insertAt(nil, 1, 1)
+	container:insertAt(bar.btnLeft, 1, 1)
 	container:insertAt(bar.btnDown, 1, 2)
 	container:insertAt(bar.btnDefault, 1, 3)
 	container:insertAt(bar.btnUp, 1, 4)
-	--container:insertAt(, 1, 5)
+	container:insertAt(bar.btnRight, 1, 5)
 
 	bar:insert(container)
 

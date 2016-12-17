@@ -76,6 +76,20 @@ Preview.new = function(w, h, options)
 		end
 	end
 
+	function preview:left()
+		if self.currentWorldId > 1 then
+			self.currentWorldId = self.currentWorldId - 1
+			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
+		end
+	end
+
+	function preview:right()
+		if self.currentWorldId < self.universe.size then
+			self.currentWorldId = self.currentWorldId + 1
+			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
+		end
+	end
+
 	function preview:up()
 		print("up")
 		if self.currentLayer < World.LAYER_SKY then

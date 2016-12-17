@@ -65,6 +65,12 @@ end
 
 function Editor:initiateCallback()
     -- control bar callback
+    self.previewLeft = function()
+        self.preview:left()
+    end
+    self.previewRight = function()
+        self.preview:right()
+    end
     self.previewUp = function()
         self.preview:up()
     end
@@ -227,6 +233,8 @@ function Editor:initiateLayout()
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight,
         {
+            leftCallback = self.previewLeft,
+            rightCallback = self.previewRight,
             upCallback = self.previewUp,
             downCallback = self.previewDown,
             defaultCallback = self.previewDefault,
@@ -287,6 +295,7 @@ function Editor:show( event )
         StateManager:initial(self.preview.universe)
         StateManager:loadLast()
         self.preview:default()
+        self.newWorldCallback()
 
         -- cursor
         self.cursor = Cursor.new()
@@ -355,6 +364,10 @@ local function onKeyEvent(event)
         Editor.preview:toggleBoardVisible()
     elseif event.keyName == "e" and event.phase == "up" then
         Editor.toggleEraser()
+    elseif event.keyName == "left" and event.phase == "up" then
+        Editor.preview:left()
+    elseif event.keyName == "right" and event.phase == "up" then
+        Editor.preview:right()
     elseif event.keyName == "up" and event.phase == "up" then
         Editor.preview:up()
     elseif event.keyName == "down" and event.phase == "up" then

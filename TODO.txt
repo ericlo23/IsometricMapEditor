@@ -2,19 +2,21 @@ state_manager
 	state manager
 		universe tables
 		save table
+
+misc
 	tile box
 		tab view
 		sort
 	undo, redo
 		history size
 	add world
-		change world btn
 		remove world 
 			btn
 			logic
+		*change world btn
 		*current world logic
 		*swipe preview fix 
 		*world distance
 		
-
 	status bar
+		total worlds, current world, current layer
