@@ -18,3 +18,8 @@ misc
 		total worlds, current world, current layer
 	layer
 		tilebase to top
+
+ui
+	confirm dialog
+	combobox
+	scrollable tabbox

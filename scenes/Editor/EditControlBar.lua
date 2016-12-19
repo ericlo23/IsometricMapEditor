@@ -39,7 +39,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnSave = widget.newButton({
 		label="Save",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if saveCallback and event.phase == "ended" then
 				saveCallback()
@@ -54,7 +54,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnLoad = widget.newButton({
 		label="Load",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if loadCallback and event.phase == "ended" then
 				loadCallback()
@@ -69,7 +69,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnUndo = widget.newButton({
 		label="Undo",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if undoCallback and event.phase == "ended" then
 				undoCallback()
@@ -84,7 +84,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnRedo = widget.newButton({
 		label="Redo",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if redoCallback and event.phase == "ended" then
 				redoCallback()
@@ -97,9 +97,9 @@ ControlBar.new = function(width, height, options)
 	})
 
 	bar.btnNewWorld = widget.newButton({
-		label="New W",
+		label="New World",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if newWorldCallback and event.phase == "ended" then
 				newWorldCallback()
@@ -112,9 +112,9 @@ ControlBar.new = function(width, height, options)
 	})
 
 	bar.btnDelWorld = widget.newButton({
-		label="Del W",
+		label="Delete World",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if delWorldCallback and event.phase == "ended" then
 				delWorldCallback()
@@ -129,7 +129,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnEraser = widget.newButton({
 		label="Eraser",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if eraserCallback and event.phase == "ended" then
 				eraserCallback()
@@ -144,7 +144,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnVisible = widget.newButton({
 		label="Visible",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and visibleCallback then
 				visibleCallback()

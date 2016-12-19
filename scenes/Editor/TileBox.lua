@@ -26,11 +26,9 @@ TileBox.new = function(maxW, maxH, layout, options)
             marginColor = {1,1,1,0}
         }
     )
-    maxW = maxW - marginSize*2
-    maxH = maxH - marginSize*2
     local options = {
-        width = maxW,
-        height = maxH,
+        width = maxW - marginSize*2, -- consider scoller margin
+        height = maxH - marginSize*2, -- consider scoller margin
         backgroundColor = {1,1,1,0.3}
     }
     if layout == TileBox.LAYOUT_VERTICAL then
@@ -102,10 +100,12 @@ TileBox.new = function(maxW, maxH, layout, options)
     local numCols = nil
     local numRows = nil
     if layout == TileBox.LAYOUT_VERTICAL then
-        numCols = math.floor((maxW+gapSize)/(GameConfig.gridWidth + gapSize))
+        local width = options.width-2*marginSize
+        numCols = math.floor((width+gapSize)/(GameConfig.gridWidth + gapSize))
         numRows = math.ceil(size / numCols)
     elseif layout == TileBox.LAYOUT_HORIZONTAL then
-        numRows = math.floor((maxH+gapSize)/(GameConfig.gridHeight + gapSize))
+        local height = options.height-2*marginSize
+        numRows = math.floor((height+gapSize)/(GameConfig.gridHeight + gapSize))
         numCols = math.ceil(size / numRows)
     end
 
@@ -126,13 +126,23 @@ TileBox.new = function(maxW, maxH, layout, options)
         i = i+1
         local x = math.floor((i-1)/numCols)+1
         local y = i-(x-1)*numCols
-        container:insertAt(tiles[name], x, y)
+        container:insertAt(tiles[name], x, y, 0, 3)
     end
 
-    container.x = maxW/2
-    container.y = container.realH/2
+    local containerMargin = MarginGroup.new(
+        container.realW+2*marginSize, 
+        container.realH+2*marginSize,
+        {
+            marginSize = marginSize,
+            marginColor = {1,1,1,0}
+        }
+    )
+    containerMargin.x = options.width/2
+    containerMargin.y = container.realH/2 + marginSize
+    containerMargin:insert(container)
+
     local scoller = widget.newScrollView(options)
-    scoller:insert(container)
+    scoller:insert(containerMargin)
 
     scoller.x = 0
     scoller.y = 0

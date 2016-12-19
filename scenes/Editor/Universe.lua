@@ -13,7 +13,7 @@ Universe.new = function()
 		if idx < 1 or idx > self.size then
 			return
 		end
-		for  i = idx, self.size-1 do
+		for  i = self.size-1, idx, -1 do
 			self.worlds[i+1].x = self.worlds[i].x
 		end
 		self:remove(self.worlds[idx])
@@ -45,6 +45,5 @@ Universe.new = function()
 
 	return universe
 end
-
 
 return Universe
