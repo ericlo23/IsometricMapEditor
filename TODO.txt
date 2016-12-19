@@ -15,3 +15,8 @@ misc
 		confrim	
 	status bar
 		total worlds, current world, current layer
+
+ui
+	confirm dialog
+	combobox
+	scrollable tabbox

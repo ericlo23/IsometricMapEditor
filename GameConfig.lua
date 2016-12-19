@@ -18,23 +18,22 @@ config.scaleFactor =  config.contentHeight / config.basicHeight
 config.fontSize = 14
 
 -- Editor layout 
-config.attrTableWidth = config.contentWidth*4/16
-config.attrTableHeight = config.contentHeight
-config.controlBarWidth = config.contentWidth*12/16
+config.controlBarWidth = config.contentWidth*16/20
 config.controlBarHeight = 18
-config.previewWidth = config.contentWidth*12/16
+config.previewWidth = config.contentWidth*16/20
 config.previewHeight = config.contentHeight-config.controlBarHeight*2
-config.tileBoxWidth = config.contentWidth*4/16
+config.tileBoxWidth = config.contentWidth*4/20
 config.tileBoxHeight = config.contentHeight/2
 config.marginColor = {1,1,1,0}
+config.marginSize = 2
 
 -- Cursor
-config.cursorWidth = 16
-config.cursorOffsetX = 15
-config.cursorOffsetY = 10
+config.cursorWidth = 35
+config.cursorOffsetX = 30
+config.cursorOffsetY = 20
 
 -- Preview
-config.previewScale = 0.15
+config.previewScale = 0.4
 config.previewScaleStep = config.previewScale / 10
 config.previewOffsetX = 0
 config.previewOffsetY = 0
@@ -52,7 +51,7 @@ config.tileBaseAlpha = 0.2
 config.tileBaseStrokeAlpha = 1
 
 -- TileBox
-config.gridWidth = 20
-config.gridHeight = 20
+config.gridWidth = 35
+config.gridHeight = 35
 
 return config

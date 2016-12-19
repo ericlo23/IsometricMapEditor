@@ -224,7 +224,7 @@ function Editor:initiateLayout()
             delWorldCallback = self.delWorldCallback,
             visibleCallback = self.previewVisible,
             eraserCallback = self.toggleEraser,
-            marginSize = 2
+            marginSize = GameConfig.marginSize
         }
     )
 
@@ -247,7 +247,7 @@ function Editor:initiateLayout()
             upCallback = self.previewUp,
             downCallback = self.previewDown,
             defaultCallback = self.previewDefault,
-            marginSize = 2
+            marginSize = GameConfig.marginSize
         }
     )
 
@@ -256,8 +256,8 @@ function Editor:initiateLayout()
 		GameConfig.tileBoxHeight,
 		TileBox.LAYOUT_VERTICAL,
         {
-            gapSize = 3,
-            marginSize = 2,
+            gapSize = 4,
+            marginSize = GameConfig.marginSize,
             callback = self.tileSelectCallback
         }
 	)

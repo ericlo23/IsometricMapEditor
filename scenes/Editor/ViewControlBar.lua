@@ -36,7 +36,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnLeft = widget.newButton({
 		label="Left",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and leftCallback then
 				leftCallback()
@@ -50,7 +50,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnRight = widget.newButton({
 		label="Right",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and rightCallback then
 				rightCallback()
@@ -64,7 +64,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnUp = widget.newButton({
 		label="Up",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and upCallback then
 				upCallback()
@@ -78,7 +78,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnDown = widget.newButton({
 		label="Down",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and downCallback then
 				downCallback()
@@ -92,7 +92,7 @@ ControlBar.new = function(width, height, options)
 	bar.btnDefault = widget.newButton({
 		label="Default",
 		labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
-		fontSize = 10,
+		fontSize = GameConfig.fontSize,
 		onEvent = function(event)
 			if event.phase == "ended" and defaultCallback then
 				defaultCallback()
