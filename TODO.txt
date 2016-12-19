@@ -10,8 +10,11 @@ misc
 		tab view
 		sort
 	undo, redo
+		add world, remove world
 		history control
 	remove world
 		confrim	
 	status bar
 		total worlds, current world, current layer
+	layer
+		tilebase to top

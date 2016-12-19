@@ -354,6 +354,17 @@ local function onMouseEvent(event)
     -- record mouse position
     Editor.mouseX = event.x
     Editor.mouseY = event.y
+    -- right click
+    if event.isSecondaryButtonDown then
+        Editor.cursor:removeObjIfExist()
+        if Editor.mode == Editor.MODE_ERASER then
+            Editor:disableEraser()
+        elseif Editor.mode == Editor.MODE_TILE then
+            Editor.tileBox:deselectTile()
+            Editor:toMode(Editor.MODE_NONE)
+        else
+        end
+    end
     -- scrolling
 	if event.scrollY > 0 then
         Editor.preview:zoomOut()
