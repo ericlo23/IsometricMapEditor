@@ -4,6 +4,8 @@ local widget = require("widget")
 local Preview = require("scenes.Editor.Preview")
 local EditControlBar = require("scenes.Editor.EditControlBar")
 local ViewControlBar = require("scenes.Editor.ViewControlBar")
+local StatusBar = require("scenes.Editor.StatusBar")
+
 local TileSprite = require("sprites.TileSprite")
 local TileBox = require("scenes.Editor.TileBox")
 local TileBase = require("scenes.Editor.TileBase")
@@ -20,10 +22,6 @@ local GridContainer = require("ui.GridContainer")
 
 local Editor = composer.newScene()
 
-function Editor:create( event )
-    local sceneGroup = self.view
-end
-
 Editor.MODE_NONE = 0
 Editor.MODE_ERASER = 1
 Editor.MODE_TILE = 2
@@ -32,7 +30,8 @@ Editor.MODE_MOVE = 3
 -- eraser
 function Editor:enableEraser()
     print("enable eraser")
-    self.cursor:setObj(TileBase.new(), self.mouseX, self.mouseY)
+    local t = TileBase.new()
+    self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
     self:toMode(Editor.MODE_ERASER)
 end
 function Editor:disableEraser()
@@ -91,18 +90,21 @@ function Editor:initiateCallback()
         self.moveEndCallback()
 
         if self.mode == Editor.MODE_NONE then
-            self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
+            local t = TileSprite.new("isotiles", name)
+            self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             self:toMode(Editor.MODE_TILE)
         elseif self.mode == Editor.MODE_TILE then
             self.cursor:removeObjIfExist()
             if name ~= nil then
-                self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
+                local t = TileSprite.new("isotiles", name)
+                self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             else
                 self:toMode(Editor.MODE_NONE)
             end
         elseif self.mode == Editor.MODE_ERASER then
             self:disableEraser()
-            self.cursor:setObj(TileSprite.new("isotiles", name), self.mouseX, self.mouseY)
+            local t = TileSprite.new("isotiles", name)
+            self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             self:toMode(Editor.MODE_TILE)
         end
     end
@@ -188,12 +190,13 @@ function Editor:initiateCallback()
         end
     end
 
-    -- new world callback
+    -- new/delete world callback
     self.newWorldCallback = function()
         local universe = self.preview.universe
         local world = World.new({name = tostring(self.preview.universe.size+1), callback = self.posSelectCallback})
         universe:addWorld(world)
         self.preview:default(universe.size)
+        self.statusBar:updateUniverseSize(tostring(self.preview.universe.size))
     end
 
     self.delWorldCallback = function()
@@ -203,6 +206,17 @@ function Editor:initiateCallback()
             self.preview:left()
         end
         universe:removeWorld(target)
+        self.statusBar:updateUniverseSize(tostring(self.preview.universe.size))
+    end
+
+    -- update status callback
+    self.updateStatusCallback = function(worldStatus, layerStatus)
+        if worldStatus then
+            self.statusBar:updateCurrentWorld(worldStatus)
+        end
+        if layerStatus then
+            self.statusBar:updateCurrentLayer(layerStatus)
+        end
     end
 end
 
@@ -212,7 +226,7 @@ function Editor:initiateLayout()
 	self.universalGroup.x = display.contentCenterX
 	self.universalGroup.y = display.contentCenterY
 
-    self.EditControlBar = EditControlBar.new(
+    self.editControlBar = EditControlBar.new(
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight,
         {
@@ -224,7 +238,8 @@ function Editor:initiateLayout()
             delWorldCallback = self.delWorldCallback,
             visibleCallback = self.previewVisible,
             eraserCallback = self.toggleEraser,
-            marginSize = GameConfig.marginSize
+            marginSize = GameConfig.marginSize,
+            marginColor = GameConfig.marginColor
         }
     )
 
@@ -234,11 +249,12 @@ function Editor:initiateLayout()
         {
             moveBegin = self.moveBeginCallback,
             moving = self.movingCallback,
-            moveEnd = self.moveEndCallback
+            moveEnd = self.moveEndCallback,
+            updateStatus = self.updateStatusCallback
         }
     )
 
-	self.ViewControlBar = ViewControlBar.new(
+	self.viewControlBar = ViewControlBar.new(
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight,
         {
@@ -247,7 +263,17 @@ function Editor:initiateLayout()
             upCallback = self.previewUp,
             downCallback = self.previewDown,
             defaultCallback = self.previewDefault,
-            marginSize = GameConfig.marginSize
+            marginSize = GameConfig.marginSize,
+            marginColor = GameConfig.marginColor
+        }
+    )
+
+    self.statusBar = StatusBar.new(
+        GameConfig.statusBarWidth,
+        GameConfig.statusBarHeight,
+        {
+            marginSize = GameConfig.marginSize,
+            marginColor = GameConfig.marginColor
         }
     )
 
@@ -264,15 +290,18 @@ function Editor:initiateLayout()
 
 	-- middle part
 	self.middleGroup = display.newGroup()
-    self.EditControlBar.x = 0
-    self.EditControlBar.y = -(GameConfig.contentHeight-GameConfig.controlBarHeight)/2
+    self.editControlBar.x = 0
+    self.editControlBar.y = -(GameConfig.contentHeight-GameConfig.controlBarHeight)/2
 	self.preview.x = 0
-	self.preview.y = 0
-	self.ViewControlBar.x = 0
-	self.ViewControlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2
-    self.middleGroup:insert(self.EditControlBar)
+	self.preview.y = -GameConfig.statusBarHeight/2
+	self.viewControlBar.x = 0
+	self.viewControlBar.y = (GameConfig.contentHeight-GameConfig.controlBarHeight)/2 - GameConfig.statusBarHeight
+    self.statusBar.x = 0
+    self.statusBar.y = (GameConfig.contentHeight-GameConfig.statusBarHeight)/2 
+    self.middleGroup:insert(self.editControlBar)
 	self.middleGroup:insert(self.preview)
-	self.middleGroup:insert(self.ViewControlBar)
+	self.middleGroup:insert(self.viewControlBar)
+    self.middleGroup:insert(self.statusBar)
 
 	-- right part
 	self.rightGroup = display.newGroup()
@@ -288,28 +317,34 @@ function Editor:initiateLayout()
 	sceneGroup:insert(self.universalGroup)
 end
 
+function Editor:create( event )
+    local sceneGroup = self.view
+
+    -- mode
+    self:toMode(Editor.MODE_NONE)
+    
+    -- layouts
+    self:initiateCallback() -- should be called before initiateLayout
+    self:initiateLayout()
+
+    -- load universe state
+    StateManager:initial(self.preview.universe)
+    StateManager:loadLast()
+    self.preview:default()
+
+    -- cursor
+    self.cursor = Cursor.new(GameConfig.cursorOffsetX, GameConfig.cursorOffsetY)
+    self.mouseX = GameConfig.contentCenterX
+    self.mouseY = GameConfig.contentCenterY
+    sceneGroup:insert(self.cursor)
+
+end
+
 function Editor:show( event )
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
-        -- mode
-        self:toMode(Editor.MODE_NONE)
-        
-        -- layouts
-        self:initiateCallback() -- should be called before initiateLayout
-        self:initiateLayout()
-
-        -- load universe state
-        StateManager:initial(self.preview.universe)
-        StateManager:loadLast()
-        self.preview:default()
-
-        -- cursor
-        self.cursor = Cursor.new()
-        self.mouseX = GameConfig.contentCenterX
-        self.mouseY = GameConfig.contentCenterY
-        sceneGroup:insert(self.cursor)
 
     elseif ( phase == "did" ) then
 

@@ -18,13 +18,14 @@ ControlBar.new = function(width, height, options)
 	local eraserCallback = options and options.eraserCallback or nil
 	
 	local marginSize = options and options.marginSize or 0
+	local marginColor = options and options.marginColor or 0
 
 	local bar = MarginGroup.new(
 		width,
 		height,
 		{
 			marginSize = marginSize,
-			marginColor = GameConfig.marginColor
+			marginColor = marginColor
 		}
 	)
 
@@ -48,7 +49,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnLoad = widget.newButton({
@@ -63,7 +64,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnUndo = widget.newButton({
@@ -78,7 +79,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnRedo = widget.newButton({
@@ -93,7 +94,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnNewWorld = widget.newButton({
@@ -108,7 +109,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnDelWorld = widget.newButton({
@@ -123,7 +124,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnEraser = widget.newButton({
@@ -138,7 +139,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 
 	bar.btnVisible = widget.newButton({
@@ -153,7 +154,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	
 	container:insertAt(bar.btnSave, 1, 1)

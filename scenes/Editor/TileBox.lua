@@ -29,7 +29,7 @@ TileBox.new = function(maxW, maxH, layout, options)
     local options = {
         width = maxW - marginSize*2, -- consider scoller margin
         height = maxH - marginSize*2, -- consider scoller margin
-        backgroundColor = {1,1,1,0.3}
+        backgroundColor = GameConfig.backgroundColor
     }
     if layout == TileBox.LAYOUT_VERTICAL then
         options["horizontalScrollDisabled"] = true

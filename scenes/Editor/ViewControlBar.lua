@@ -15,13 +15,14 @@ ControlBar.new = function(width, height, options)
 	local rightCallback = options and options.rightCallback or nil
 
 	local marginSize = options and options.marginSize or 0
+	local marginColor = options and options.marginColor or 0
 
 	local bar = MarginGroup.new(
 		width,
 		height,
 		{
 			marginSize = marginSize,
-			marginColor = GameConfig.marginColor
+			marginColor = marginColor
 		}
 	)
 
@@ -45,7 +46,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	bar.btnRight = widget.newButton({
 		label="Right",
@@ -59,7 +60,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	bar.btnUp = widget.newButton({
 		label="Up",
@@ -73,7 +74,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	bar.btnDown = widget.newButton({
 		label="Down",
@@ -87,7 +88,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	bar.btnDefault = widget.newButton({
 		label="Default",
@@ -101,7 +102,7 @@ ControlBar.new = function(width, height, options)
 		shape = "rect",
 		width = container.gridW,
 		height = container.gridH,
-		fillColor = { default={1,1,1,0.3}, over={1,1,1,0.1} },
+		fillColor = { default=GameConfig.backgroundColor, over={1,1,1,0.1} },
 	})
 	
 	container:insertAt(bar.btnLeft, 1, 1)

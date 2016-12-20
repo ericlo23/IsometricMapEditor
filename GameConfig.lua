@@ -20,12 +20,15 @@ config.fontSize = 14
 -- Editor layout 
 config.controlBarWidth = config.contentWidth*16/20
 config.controlBarHeight = 18
+config.statusBarWidth = config.contentWidth*16/20
+config.statusBarHeight = 18
 config.previewWidth = config.contentWidth*16/20
-config.previewHeight = config.contentHeight-config.controlBarHeight*2
+config.previewHeight = config.contentHeight-config.controlBarHeight*2-config.statusBarHeight
 config.tileBoxWidth = config.contentWidth*4/20
-config.tileBoxHeight = config.contentHeight/2
+config.tileBoxHeight = config.contentHeight*2/3
 config.marginColor = {1,1,1,0}
 config.marginSize = 2
+config.backgroundColor = {1,1,1,0.3}
 
 -- Cursor
 config.cursorWidth = 35

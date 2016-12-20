@@ -68,10 +68,12 @@ GridContainer.new = function(options)
 
 	--print(json.prettify( g ))
 
-	--[[
-	local r = display.newRect( 0, 0, g.realW, g.realH )
-	g:insert(r)
-	]]
+	if options.backgroundColor then
+		local r = display.newRect( 0, 0, g.realW, g.realH )
+		r.fill = options.backgroundColor
+		g:insert(r)
+	end
+	
 	g.tab = {}
 	for i = 1, g.numRows do
 		g.tab[i] = {}

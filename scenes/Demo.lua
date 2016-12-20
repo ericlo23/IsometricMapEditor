@@ -1,3 +1,5 @@
+local mui = require( "materialui.mui" )
+
 local composer = require("composer")
 
 local function onOrientationChange( event )
@@ -16,6 +18,65 @@ function scene:create( event )
 
     local sceneGroup = self.view
 	
+    mui.init()
+
+    mui.newNavbar({
+		name = "navbar_demo",
+		--width = mui.getScaleVal(500), -- defaults to display.contentWidth
+		height = mui.getScaleVal(70),
+		left = 0,
+		top = 0,
+		fillColor = { 0.63, 0.81, 0.181 },
+		activeTextColor = { 1, 1, 1, 1 },
+		padding = mui.getScaleVal(10),
+	})
+
+	-- let's attach something to the navbar
+	--
+	mui.newIconButton({
+		name = "menu",
+		text = "menu",
+		width = mui.getScaleVal(50),
+		height = mui.getScaleVal(50),
+		x = mui.getScaleVal(0),
+		y = mui.getScaleVal(0),
+		font = "MaterialIcons-Regular.ttf",
+		textColor = { 1, 1, 1 },
+		textAlign = "center",
+		callBack = showSlidePanel2
+	})
+	-- use the helper method attachToNavBar to attach
+	--
+	mui.attachToNavBar( "navbar_demo", {
+		widgetName = "menu",
+		widgetType = "IconButton",
+		align = "left",  -- left | right supported
+	})
+
+	local buttonHeight = mui.getScaleVal(70)
+	mui.newToolbar({
+		name = "toolbar_demo",
+		--width = mui.getScaleVal(500), -- defaults to display.contentWidth
+		height = mui.getScaleVal(70),
+		buttonHeight = buttonHeight,
+		x = 0,
+		y = (display.contentHeight - (buttonHeight * 0.5)),
+		layout = "horizontal",
+		labelFont = native.systemFont,
+		fillColor = { 0, 0.46, 1 },
+		labelColor = { 1, 1, 1 },
+		labelColorOff = { 0.41, 0.03, 0.49 },
+		callBack = mui.actionForToolbarDemo,
+		sliderColor = { 1, 1, 1 },
+		list = {
+			{ key = "Home", value = "1", icon="home", labelText="Home", isActive = true },
+			{ key = "Newsroom", value = "2", icon="new_releases", labelText="News", isActive = false },
+			{ key = "Location", value = "3", icon="location_searching", labelText="Location", isActive = false },
+			{ key = "To-do", value = "4", icon="view_list", labelText="To-do", isActive = false },
+			-- { key = "Viewer", value = "4", labelText="View", isActive = false } -- uncomment to see View as text
+		}
+	})
+
 end
 
 function scene:show( event )
@@ -24,6 +85,9 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
+
+
+    	--[[
 		print("building")
 
 		local sheetName = "isotiles"
@@ -47,7 +111,7 @@ function scene:show( event )
 		end
 		self.beachGroup.x = display.contentCenterX
 		self.beachGroup.y = display.contentCenterY    
-
+		]]
 
     elseif ( phase == "did" ) then
 		
@@ -63,9 +127,10 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
 		print("cleaning")
+        --[[
         self.beachGroup:removeSelf()
 		self.beaches = nil
-
+		]]
     elseif ( phase == "did" ) then
 
     end

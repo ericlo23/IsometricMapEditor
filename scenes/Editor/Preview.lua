@@ -10,6 +10,7 @@ Preview.new = function(w, h, options)
 	local moveBegin = options and options.moveBegin or nil
 	local moving = options and options.moving or nil
 	local moveEnd = options and options.moveEnd or nil
+	local updateStatus = options and options.updateStatus or nil
 
 	local preview = display.newContainer(w, h)
 	preview.universe = Universe.new()
@@ -21,6 +22,30 @@ Preview.new = function(w, h, options)
 	rect.isHitTestable = true
 	preview:insert(rect)
 	preview:insert(preview.universe)
+
+	function preview:setCurrentLayer(id)
+		self.currentLayer = id
+		if updateStatus then
+			local layerString = ""
+			if self.currentLayer == World.LAYER_SKY then
+				layerString = layerString.."SKY"
+			elseif self.currentLayer == World.LAYER_GROUND then
+				layerString = layerString.."GROUND"
+			elseif self.currentLayer == World.LAYER_UNDERGROUND then
+				layerString = layerString.."UNDERGROUND"
+			end
+			layerString = layerString
+			updateStatus(nil, layerString)
+		end
+	end
+
+	function preview:setCurrentWorld(id)
+		self.currentWorldId = id
+		if updateStatus then
+			local worldString = tostring(self.currentWorldId)..", "..self:getCurrentWorld().name
+			updateStatus(worldString, nil)
+		end
+	end	
 
 	function preview:getCurrentWorld()
 		return self.universe:getWorld(self.currentWorldId)
@@ -78,14 +103,14 @@ Preview.new = function(w, h, options)
 
 	function preview:left()
 		if self.currentWorldId > 1 then
-			self.currentWorldId = self.currentWorldId - 1
+			self:setCurrentWorld(self.currentWorldId - 1)
 			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
 
 	function preview:right()
 		if self.currentWorldId < self.universe.size then
-			self.currentWorldId = self.currentWorldId + 1
+			self:setCurrentWorld(self.currentWorldId + 1)
 			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
@@ -93,7 +118,7 @@ Preview.new = function(w, h, options)
 	function preview:up()
 		print("up")
 		if self.currentLayer < World.LAYER_SKY then
-			self.currentLayer = self.currentLayer + 1
+			self:setCurrentLayer(self.currentLayer + 1)
 			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
@@ -101,7 +126,7 @@ Preview.new = function(w, h, options)
 	function preview:down()
 		print("down")
 		if self.currentLayer > World.LAYER_UNDERGROUND then
-			self.currentLayer = self.currentLayer - 1
+			self:setCurrentLayer(self.currentLayer - 1)
 			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 		end
 	end
@@ -111,11 +136,11 @@ Preview.new = function(w, h, options)
 		self.currentScale = GameConfig.previewScale
 		if self.universe.size ~= 0 then
 			if idx and idx > 0 and idx <= self.universe.size then
-				self.currentWorldId = idx
+				self:setCurrentWorld(idx)
 			else
-				self.currentWorldId = 1
+				self:setCurrentWorld(1)
 			end
-			self.currentLayer = World.LAYER_GROUND
+			self:setCurrentLayer(World.LAYER_GROUND)
 			self:changeCenterToLayer(self.currentWorldId, self.currentLayer)
 			self.universe.xScale = GameConfig.previewScale
 			self.universe.yScale = GameConfig.previewScale
@@ -154,18 +179,18 @@ Preview.new = function(w, h, options)
 			local undergroundDist = math.abs(undergroundY-previewY)
 			if distY < 0 then
 				if self.currentLayer == World.LAYER_GROUND and groundDist > undergroundDist then
-					self.currentLayer = World.LAYER_UNDERGROUND
+					self:setCurrentLayer(World.LAYER_UNDERGROUND)
 					print("set current layer:", self.currentLayer)
 				elseif self.currentLayer == World.LAYER_SKY and skyDist > groundDist then
-					self.currentLayer = World.LAYER_GROUND
+					self:setCurrentLayer(World.LAYER_GROUND)
 					print("set current layer:", self.currentLayer)
 				end
 			elseif distY > 0 then
 				if self.currentLayer == World.LAYER_GROUND and skyDist < groundDist then
-					self.currentLayer = World.LAYER_SKY
+					self:setCurrentLayer(World.LAYER_SKY)
 					print("set current layer:", self.currentLayer)
 				elseif self.currentLayer == World.LAYER_UNDERGROUND and groundDist < undergroundDist then
-					self.currentLayer = World.LAYER_GROUND
+					self:setCurrentLayer(World.LAYER_GROUND)
 					print("set current layer:", self.currentLayer)
 				end
 			end
@@ -178,7 +203,7 @@ Preview.new = function(w, h, options)
 				local rightDist = math.abs(rightWorldX - previewX)
 				--print("r", rightDist)
 				if currentDist > rightDist then
-					self.currentWorldId = self.currentWorldId+1
+					self:setCurrentWorld(self.currentWorldId+1)
 					print("set current world:", self.currentWorldId)
 				end
 			elseif distX > 0 and self.currentWorldId > 1 then
@@ -186,22 +211,10 @@ Preview.new = function(w, h, options)
 				local leftDist = math.abs(leftWorldX - previewX)
 				--print("l", leftDist)
 				if currentDist > leftDist then
-					self.currentWorldId = self.currentWorldId-1
+					self:setCurrentWorld(self.currentWorldId-1)
 					print("set current world:", self.currentWorldId)
 				end
 			end
-
-			--[[
-			if skyDist < groundDist and skyDist < undergroundDist then
-				self.currentLayer = World.LAYER_SKY
-			elseif groundDist < skyDist and groundDist < undergroundDist then
-				self.currentLayer = World.LAYER_GROUND
-			elseif undergroundDist < skyDist and undergroundDist < groundDist then
-				self.currentLayer = World.LAYER_UNDERGROUND
-			end
-			]]
-			-- set current world as closest world to center
-			--print(self.currentWorldId)			
 		end
 	end
 
