@@ -126,7 +126,7 @@ TileBox.new = function(maxW, maxH, layout, options)
         i = i+1
         local x = math.floor((i-1)/numCols)+1
         local y = i-(x-1)*numCols
-        container:insertAt(tiles[name], x, y, 0, 3)
+        container:insertAt(tiles[name], x, y, 0, 1)
     end
 
     local containerMargin = MarginGroup.new(

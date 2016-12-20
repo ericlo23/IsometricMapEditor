@@ -1,6 +1,9 @@
 local composer = require("composer")
 local Sprite = require("sprites.Sprite")
 
+--local performance = require("util.performance")
+--performance:newPerformanceMeter()
+
 Sprite.addSheet("isotiles", "sprites/isotiles.png", "sprites.isotiles")
 
 --composer.gotoScene("tool.AutoOutliner")

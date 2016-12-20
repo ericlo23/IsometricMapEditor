@@ -8,12 +8,14 @@ local basePath = system.pathForFile("", system.DocumentsDirectory)
 local create_tables = [=[
 	CREATE TABLE IF NOT EXISTS worlds(
 		id INTEGER PRIMARY KEY,
-		culture TEXT
+		culture TEXT,
+		deleted BOOLEAN
 	);
 	CREATE TABLE IF NOT EXISTS layers(
 		id INTEGER PRIMARY KEY,
 		type TEXT,
-		world_id INTEGER
+		world_id INTEGER,
+		deleted BOOLEAN
 	);
 	CREATE TABLE IF NOT EXISTS tiles(
 		id INTEGER PRIMARY KEY,
@@ -21,7 +23,8 @@ local create_tables = [=[
 		name TEXT,
 		x INTEGER,
 		y INTEGER,
-		layer_id INTEGER
+		layer_id INTEGER,
+		deleted BOOLEAN
 	);
 ]=]
 
@@ -30,6 +33,8 @@ local manager = {}
 function manager:save(file)
 	local db = sqlite3.open(file)
 	-- save
+	
+
 	db:close()
 end
 
@@ -71,12 +76,15 @@ function manager:initial(universe)
 	for fileName in lfs.dir(basePath) do
 		-- get save idx
 		local saveIdx = tonumber( string.match(fileName, "%d+.save") )
-		print("save idx", saveIdx)
-		if max < saveIdx then
-			max = saveIdx
+		if saveIdx then
+			if max < saveIdx then
+				max = saveIdx
+			end
 		end
 	end
 	self.lastSaveIdx = max
+
+	lfs.chdir(basePath)
 
 	self.universe = universe
 end
