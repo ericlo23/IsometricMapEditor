@@ -1,23 +1,28 @@
 state_manager
-	state manager
-		universe tables
-		save table
+	change flag
 
 misc
 	load
 		load list
+			combo box
 	tile box
 		tab view
+			tab box
 		sort
 	undo, redo
 		add world, remove world
-		history control
-	remove world
-		confrim	
+		history size control
+	universe
+		world size control
+	world
+		remove world
+			confirm 
+				dialog
 	layer
 		tilebase to top
 
 ui
-	confirm dialog
+	dialog
+	input dialog
 	combobox
 	scrollable tabbox

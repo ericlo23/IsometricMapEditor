@@ -1,96 +1,130 @@
-local sqlite3 = require("sqlite3")
 local lfs = require("lfs")
 
-local manager = {}
+local json = require("json")
+
+local loadsave = require("util.loadsave")
+
+local TileSprite = require("sprites.TileSprite")
+local Universe = require("scenes.Editor.Universe")
+local World = require("scenes.Editor.World")
 
 local basePath = system.pathForFile("", system.DocumentsDirectory)
 
-local create_tables = [=[
-	CREATE TABLE IF NOT EXISTS worlds(
-		id INTEGER PRIMARY KEY,
-		culture TEXT,
-		deleted BOOLEAN
-	);
-	CREATE TABLE IF NOT EXISTS layers(
-		id INTEGER PRIMARY KEY,
-		type TEXT,
-		world_id INTEGER,
-		deleted BOOLEAN
-	);
-	CREATE TABLE IF NOT EXISTS tiles(
-		id INTEGER PRIMARY KEY,
-		tag TEXT,
-		name TEXT,
-		x INTEGER,
-		y INTEGER,
-		layer_id INTEGER,
-		deleted BOOLEAN
-	);
-]=]
-
 local manager = {}
 
-function manager:save(file)
-	local db = sqlite3.open(file)
+function manager:save(file, universe)
+	local setTileTable = function(layerTable, tiles)
+		for x, tileCol in pairs(tiles) do
+			layerTable[x] = {}
+			for y, tile in pairs(tileCol) do
+				if tile.sprite then
+					layerTable[x][y] = {
+						["tileTag"] = tile.sprite.tag, 
+						["tileName"] = tile.sprite.name
+					}
+				else
+					layerTable[x][y] = {}
+				end
+			end
+		end
+	end
+	-- set json table
+	local jsonTable = {}
+	jsonTable["universe"] = {}
+	for idx, world in pairs(universe.worlds) do
+		jsonTable["universe"][idx] = {}
+		jsonTable["universe"][idx]["name"] = world.name
+		jsonTable["universe"][idx]["sky"] = {}
+		jsonTable["universe"][idx]["ground"] = {}
+		jsonTable["universe"][idx]["underground"] = {}
+		setTileTable(jsonTable["universe"][idx]["sky"], world.sky.tiles)
+		setTileTable(jsonTable["universe"][idx]["ground"], world.ground.tiles)
+		setTileTable(jsonTable["universe"][idx]["underground"], world.underground.tiles)
+	end
 	-- save
-	
+	loadsave.saveTable(jsonTable, file)
 
-	db:close()
+	print("save finished")
 end
 
-function manager:saveOld()
+function manager:saveOld(universe)
 	-- first save file
-	if self.lastSaveIdx == -1 then
-		print("save not found")
-		self:saveNew()
+	if not self.currentFile then
+		self:saveNew(universe)
 		return
 	end
+	-- backup
+	os.rename(self.currentFile, self.currentFile..".bak")
 	-- last save file
-	local oldFile = tostring(self.lastSaveIdx)..".save"
-	self.save(oldFile)
+	self:save(self.currentFile, universe)
 end
 
-function manager:saveNew()
+function manager:saveNew(universe)
 	self.lastSaveIdx = self.lastSaveIdx + 1
-	local newFile = tostring(self.lastSaveIdx)..".save"
-	self.save(newFile)
+	self.currentFile = tostring(self.lastSaveIdx)..".save"
+	self:save(self.currentFile, universe)
 end
 
 function manager:load(file)
-	local db = sqlite3.open(file)
-	-- load
-	db:close()
+	local setLayerTile = function(layer, layerTable)
+		for x, tileColTable in pairs(layerTable) do
+			for y, tileTable in pairs(layerTable[x]) do
+				if tileTable["tileTag"] and tileTable["tileName"] then
+					local tile = TileSprite.new(tileTable["tileTag"], tileTable["tileName"])
+					layer:_setTileAt(tile, x, y)
+				end
+			end
+		end
+	end
+
+	self.currentFile = file
+	local universe = Universe.new()
+
+	local jsonTable = loadsave.loadTable(file)
+
+	for idx, worldTable in pairs(jsonTable["universe"]) do
+		local world = World.new(worldTable.name, {callback = self.posSelectCallback})
+		setLayerTile(world.sky, worldTable["sky"])
+		setLayerTile(world.ground, worldTable["ground"])
+		setLayerTile(world.underground, worldTable["underground"])
+		universe:addWorld(world)
+	end
+	print("load finished")
+	return universe
 end
 
 function manager:loadLast()
 	if self.lastSaveIdx == -1 then
 		print("save not found")
-		return
+		return nil
 	end
-	self.load(tostring(self.lastSaveIdx)..".save")
+	return self:load(tostring(self.lastSaveIdx)..".save")
 end
 
-function manager:initial(universe)
+function manager:initial(posSelectCallback)
 	-- find max save
 	local max = -1
 	for fileName in lfs.dir(basePath) do
 		-- get save idx
-		local saveIdx = tonumber( string.match(fileName, "%d+.save") )
-		if saveIdx then
-			if max < saveIdx then
-				max = saveIdx
+		if fileName:match("%d+%.save") and fileName:match("%d+%.save"):len() == fileName:len() then
+			local saveIdx = tonumber( string.match(fileName, "%d+") )
+			if saveIdx then
+				if max < saveIdx then
+					max = saveIdx
+				end
 			end
 		end
 	end
 	self.lastSaveIdx = max
 
-	lfs.chdir(basePath)
+	-- posSelectCallback
+	self.posSelectCallback = posSelectCallback
 
-	self.universe = universe
+	lfs.chdir(basePath)
 end
 
 function manager:destroy()
-	self.universe = nil
+
 end
 
 return manager

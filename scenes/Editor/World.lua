@@ -8,10 +8,9 @@ World.LAYER_SKY = 1
 World.LAYER_GROUND = 0
 World.LAYER_UNDERGROUND = -1
 
-World.new = function(options)
+World.new = function(name, options)
 	local world = display.newGroup()
-	--local boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
-	world.name = options and options.name or "default"
+	world.name = name
 
 	local sky = Layer.new("sky", world, options)
 	sky.x = 0

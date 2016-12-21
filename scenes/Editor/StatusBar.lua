@@ -51,16 +51,6 @@ StatusBar.new = function(w, h, options)
 		align = "left"
 	})
 
-	--local r = display.newRect(0, 0, grid.gridW, grid.gridH)
-	--r.fill = GameConfig.backgroundColor
-	--grid:insertAt(r, 1, 1)
-	
-	--r = display.newRect(0, 0, grid.gridW, grid.gridH)
-	--r.fill = GameConfig.backgroundColor
-	--grid:insertAt(r, 1, 2)
-
-
-
 	grid:insertAt(
 		display.newText({
 			text="Universe Size:",

@@ -85,6 +85,14 @@ Layer.new = function(text, world, options)
 		return self.tiles[i][j]
 	end
 
+	function layer:_setTileAt(o, i, j)
+		o.x = 0
+		o.y = 0
+		self.tiles[i][j].sprite = o
+		self.tiles[i][j]:insert(o)
+		o:toBack()
+	end
+
 	function layer:setTileAt(o, i, j)
 		local t = self.tiles[i][j]
 		if t.sprite then
@@ -93,11 +101,7 @@ Layer.new = function(text, world, options)
 			t.sprite = nil
 		end
 		print("paste tile at world", self.world.name, self.id, "("..i..", "..j..")")
-		o.x = 0
-		o.y = 0
-		t.sprite = o
-		t:insert(o)
-		o:toBack()
+		self:_setTileAt(o, i, j)
 	end
 
 	function layer:toggleBoardVisible()

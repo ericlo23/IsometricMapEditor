@@ -13,7 +13,6 @@ Preview.new = function(w, h, options)
 	local updateStatus = options and options.updateStatus or nil
 
 	local preview = display.newContainer(w, h)
-	preview.universe = Universe.new()
 	preview.currentWorldId = 0
 
 	-- make preview touchable
@@ -21,7 +20,15 @@ Preview.new = function(w, h, options)
 	rect.fill = {1,1,1,0}
 	rect.isHitTestable = true
 	preview:insert(rect)
-	preview:insert(preview.universe)
+
+	function preview:setUniverse(universe)
+		if self.universe then
+			self:remove(self.universe)
+			self.universe = nil
+		end
+		self.universe = universe
+		self:insert(preview.universe)
+	end
 
 	function preview:setCurrentLayer(id)
 		self.currentLayer = id
@@ -42,7 +49,7 @@ Preview.new = function(w, h, options)
 	function preview:setCurrentWorld(id)
 		self.currentWorldId = id
 		if updateStatus then
-			local worldString = tostring(self.currentWorldId)..", "..self:getCurrentWorld().name
+			local worldString = self:getCurrentWorld().name
 			updateStatus(worldString, nil)
 		end
 	end	
@@ -146,9 +153,6 @@ Preview.new = function(w, h, options)
 			self.universe.yScale = GameConfig.previewScale
 		end
 	end
-
-	-- Layer layout
-	--preview:default()
 
 	function preview:move(distX, distY)
 		--print(distX, distY)

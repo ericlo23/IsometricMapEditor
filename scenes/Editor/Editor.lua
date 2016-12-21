@@ -12,6 +12,7 @@ local TileBase = require("scenes.Editor.TileBase")
 local Cursor = require("ui.Cursor")
 local StateManager = require("scenes.Editor.StateManager")
 local World = require("scenes.Editor.World")
+local Universe = require("scenes.Editor.Universe")
 
 local Action = require("scenes.Editor.Action")
 
@@ -193,7 +194,7 @@ function Editor:initiateCallback()
     -- new/delete world callback
     self.newWorldCallback = function()
         local universe = self.preview.universe
-        local world = World.new({name = tostring(self.preview.universe.size+1), callback = self.posSelectCallback})
+        local world = World.new(tostring(self.preview.universe.size+1), {callback = self.posSelectCallback})
         universe:addWorld(world)
         self.preview:default(universe.size)
         self.statusBar:updateUniverseSize(tostring(self.preview.universe.size))
@@ -218,6 +219,21 @@ function Editor:initiateCallback()
             self.statusBar:updateCurrentLayer(layerStatus)
         end
     end
+
+    -- saveNew callback
+    self.saveCallback = function()
+        StateManager:saveOld(self.preview.universe)
+    end
+
+    -- loadLast callback
+    self.loadCallback = function()
+        local universe = StateManager:loadLast()
+        if not universe then
+            universe = Universe.new() 
+        end
+        self.preview:setUniverse(universe)
+        self.preview:default()
+    end
 end
 
 function Editor:initiateLayout()
@@ -230,8 +246,8 @@ function Editor:initiateLayout()
         GameConfig.controlBarWidth,
         GameConfig.controlBarHeight,
         {
-            saveCallback = nil,
-            loadCallback = nil,
+            saveCallback = self.saveCallback,
+            loadCallback = self.loadCallback,
             undoCallback = Action.undo,
             redoCallback = Action.redo,
             newWorldCallback = self.newWorldCallback,
@@ -328,9 +344,8 @@ function Editor:create( event )
     self:initiateLayout()
 
     -- load universe state
-    StateManager:initial(self.preview.universe)
-    StateManager:loadLast()
-    self.preview:default()
+    StateManager:initial(self.posSelectCallback)
+    self.loadCallback()
 
     -- cursor
     self.cursor = Cursor.new(GameConfig.cursorOffsetX, GameConfig.cursorOffsetY)
@@ -435,8 +450,16 @@ local function onKeyEvent(event)
             Editor:toMode(Editor.MODE_NONE)
         else
         end
+    -- save: ctrl+s
+    elseif event.isCtrlDown and event.keyName == "s" and event.phase == "up" then
+        Editor.saveCallback()
+    -- load: ctrl+o
+    elseif event.isCtrlDown and event.keyName == "o" and event.phase == "up" then
+        Editor.loadCallback()
+    -- undo: ctrl+z
     elseif event.isCtrlDown and event.keyName == "z" and event.phase == "up" then
         Action.undo()
+    -- redo: ctrl+y, ctrl+shift+z
     elseif ((event.isCtrlDown and event.keyName == "y") or
             (event.isCtrlDown and event.isShiftDown and event.keyName == "z")) and 
             event.phase == "up" then
