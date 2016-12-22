@@ -26,10 +26,10 @@ n: numbers
 ]]
 
 Layer.new = function(text, world, options)
+	local callback = options and options.callback or nil
 	local layer = display.newGroup()
 	layer.id = text
 	layer.world = world
-	layer.callback = options and options.callback or nil
 	layer.tiles = {}
 	layer.boardAlpha = options and options.boardAlpha or GameConfig.boardAlpha
 
@@ -56,16 +56,14 @@ Layer.new = function(text, world, options)
 			--insert base tile
 			local tileBase = TileBase.new()
 			tileBase.alpha = layer.boardAlpha
-			tileBase.callback = layer.callback
-			local function touchListener(self, event)
+			local function touchListener(event)
 				--print("touch on: "..i..","..j)
-				if self.callback then
-					return self.callback(world, layer.id, i, j)
+				if callback then
+					return callback(world, layer.id, i, j)
 				end
 				return true
 			end
-			tileBase.touch = touchListener
-			tileBase:addEventListener( "touch", tileBase )
+			tileBase:addEventListener( "touch", touchListener )
 			t.tileBase = tileBase
 			t:insert(tileBase)
 			layer:insert(t)

@@ -7,7 +7,8 @@ local ViewControlBar = require("scenes.Editor.ViewControlBar")
 local StatusBar = require("scenes.Editor.StatusBar")
 
 local TileSprite = require("sprites.TileSprite")
-local TileBox = require("scenes.Editor.TileBox")
+--local TileBox = require("scenes.Editor.TileBox")
+local TileBox = require("scenes.Editor.TileBox2")
 local TileBase = require("scenes.Editor.TileBase")
 local Cursor = require("ui.Cursor")
 local StateManager = require("scenes.Editor.StateManager")
@@ -86,25 +87,26 @@ function Editor:initiateCallback()
 
     -- tile select callback
     self.tileSelectCallback = function()
+        local tag = self.tileBox.selectedTileTag
         local name = self.tileBox.selectedTileName
         -- if still in move mode
         self.moveEndCallback()
 
         if self.mode == Editor.MODE_NONE then
-            local t = TileSprite.new("isotiles", name)
+            local t = TileSprite.new(tag, name)
             self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             self:toMode(Editor.MODE_TILE)
         elseif self.mode == Editor.MODE_TILE then
             self.cursor:removeObjIfExist()
-            if name ~= nil then
-                local t = TileSprite.new("isotiles", name)
+            if tag ~= nil and name ~= nil then
+                local t = TileSprite.new(tag, name)
                 self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             else
                 self:toMode(Editor.MODE_NONE)
             end
         elseif self.mode == Editor.MODE_ERASER then
             self:disableEraser()
-            local t = TileSprite.new("isotiles", name)
+            local t = TileSprite.new(tag, name)
             self.cursor:setObj(t, self.mouseX, self.mouseY, GameConfig.cursorWidth/t.width)
             self:toMode(Editor.MODE_TILE)
         end
@@ -116,16 +118,17 @@ function Editor:initiateCallback()
         self.moveEndCallback()
         -- paste tile
         if self.mode == Editor.MODE_TILE then
+            local tag = self.tileBox.selectedTileTag
             local name = self.tileBox.selectedTileName
             local oldSprite = world[layerId].tiles[x][y].sprite
-            if not oldSprite or (oldSprite and oldSprite.name ~= name) then
+            if not oldSprite or (oldSprite and (oldSprite.tag ~= tag or oldSprite.name ~= name)) then
                 local action = Action.new(
                     Action.TYPE_PASTE_TILE,
                     world,
                     layerId,
                     x, 
                     y,
-                    "isotiles",
+                    tag,
                     name
                 )
                 Action.todo(action)

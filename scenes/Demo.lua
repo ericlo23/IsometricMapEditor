@@ -1,3 +1,5 @@
+local TabView = require("ui.TabView")
+
 local mui = require( "materialui.mui" )
 
 local composer = require("composer")
@@ -17,8 +19,23 @@ local scene = composer.newScene()
 function scene:create( event )
 
     local sceneGroup = self.view
+
+    local t = TabView.new(200, 300, {marginSize = 1, backgroundColor={1,1,1,0.3}})
 	
-    mui.init()
+    t:insertTab("test", display.newRect(0, 0, 100, 100))
+    t:insertTab("tttttttt", display.newRect(0, 0, 1111, 100))
+    t:insertTab("i am hero", nil)
+    t:insertTab("am i?")
+    t:insertTab("bbbbbbb")
+    t:insertTab("??")
+
+
+	t.x = display.contentCenterX
+	t.y = display.contentCenterY
+    sceneGroup:insert(t)
+
+    --[[
+	mui.init()
 
     mui.newNavbar({
 		name = "navbar_demo",
@@ -76,7 +93,7 @@ function scene:create( event )
 			-- { key = "Viewer", value = "4", labelText="View", isActive = false } -- uncomment to see View as text
 		}
 	})
-
+	]]
 end
 
 function scene:show( event )

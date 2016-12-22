@@ -1,5 +1,6 @@
 local widget = require("widget")
 
+local TabView = require("ui.TabView")
 local MarginGroup = require("ui.MarginGroup")
 local GridContainer = require("ui.GridContainer")
 
@@ -44,29 +45,6 @@ TileBox.new = function(maxW, maxH, layout, options)
     local size = 0
     local selectedTileName = nil
 
-    function tileBox:deselectTile()
-        print("deselect:", self.selectedTileName)
-        self.tiles[self.selectedTileName].selectRegion.alpha = 0
-        self.selectedTileName = nil
-    end
-
-    function tileBox:selectTile(name)
-        print("select:", name)
-        self.selectedTileName = name
-        self.tiles[self.selectedTileName].selectRegion.alpha = 0.3
-    end
-
-    function tileBox:chooseTile(name)
-        if self.selectedTileName ~= name then
-            if self.selectedTileName ~= nil then
-                self:deselectTile()
-            end
-            self:selectTile(name)
-        else
-            self:deselectTile()
-        end
-    end
-
     -- load isotiles
     for name, idx in pairs(isotiles.frameIndex) do
         size = size+1
@@ -96,7 +74,7 @@ TileBox.new = function(maxW, maxH, layout, options)
         tiles[name]:insert(rect)
     end
 
-    -- calculate proper layout
+    -- calculate GridContainer layout
     local numCols = nil
     local numRows = nil
     if layout == TileBox.LAYOUT_VERTICAL then
@@ -147,11 +125,37 @@ TileBox.new = function(maxW, maxH, layout, options)
     scoller.x = 0
     scoller.y = 0
 
+
+
     tileBox:insert(scoller)
 
     tileBox.tiles = tiles
     tileBox.size = size
     tileBox.selectedTileName = selectedTileName
+
+
+    function tileBox:deselectTile()
+        print("deselect:", self.selectedTileName)
+        self.tiles[self.selectedTileName].selectRegion.alpha = 0
+        self.selectedTileName = nil
+    end
+
+    function tileBox:selectTile(name)
+        print("select:", name)
+        self.selectedTileName = name
+        self.tiles[self.selectedTileName].selectRegion.alpha = 0.3
+    end
+
+    function tileBox:chooseTile(name)
+        if self.selectedTileName ~= name then
+            if self.selectedTileName ~= nil then
+                self:deselectTile()
+            end
+            self:selectTile(name)
+        else
+            self:deselectTile()
+        end
+    end
 
     return tileBox
 end

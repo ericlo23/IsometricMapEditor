@@ -25,4 +25,4 @@ ui
 	dialog
 	input dialog
 	combobox
-	scrollable tabbox
+	scrollable tabview
