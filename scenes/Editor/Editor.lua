@@ -123,15 +123,32 @@ function Editor:initiateCallback()
             local tag = self.tileBox.selectedTileTag
             local name = self.tileBox.tiles[tag][self.tileBox.selectedTileIdx].sprite.name
             local oldSprite = world[layerId].tiles[x][y].sprite
-            if not oldSprite or (oldSprite and (oldSprite.tag ~= tag or oldSprite.name ~= name)) then
+            if not oldSprite then
                 local action = Action.new(
                     Action.TYPE_PASTE_TILE,
                     world,
                     layerId,
                     x, 
                     y,
-                    tag,
-                    name
+                    {
+                        tileTag = tag,
+                        tileName = name
+                    }
+                )
+                Action.todo(action)
+            elseif oldSprite.tag ~= tag or oldSprite.name ~= name then
+                local action = Action.new(
+                    Action.TYPE_PASTE_TILE,
+                    world,
+                    layerId,
+                    x, 
+                    y,
+                    {
+                        tileTag = tag,
+                        tileName = name,
+                        preTileTag = oldSprite.tag,
+                        preTileName = oldSprite.name
+                    }
                 )
                 Action.todo(action)
             end
@@ -146,13 +163,21 @@ function Editor:initiateCallback()
                     layerId,
                     x, 
                     y,
-                    sprite.tag,                    
-                    sprite.name
+                    {
+                        preTileTag = sprite.tag,
+                        preTileName = sprite.name
+                    }
                 )
                 Action.todo(action)
             end
             --world[layerId]:cleanAt(x, y)
             return true
+        elseif self.mode == Editor.MODE_NONE then
+            local sprite = world[layerId]:getTileAt(x, y).sprite
+            if sprite then
+
+
+            end
         end
         return false
     end

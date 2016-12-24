@@ -32,8 +32,8 @@ config.backgroundColor = {1,1,1,0.3}
 
 -- Cursor
 config.cursorWidth = 35
-config.cursorOffsetX = 30
-config.cursorOffsetY = 20
+config.cursorOffsetX = 0
+config.cursorOffsetY = 0
 
 -- Preview
 config.previewScale = 0.4

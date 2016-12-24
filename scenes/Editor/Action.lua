@@ -31,10 +31,15 @@ Action.exec = function(action)
 end
 
 Action.reverse = function(action)
-	local t = None
-	if action.type == Action.TYPE_CLEAN_TILE then
+	local t = nil
+	local tag = nil
+	local name = nil
+
+	if action.preTileTag and action.preTileName then
 		t = Action.TYPE_PASTE_TILE
-	elseif action.type == Action.TYPE_PASTE_TILE then
+		tag = action.preTileTag
+		name = action.preTileName
+	else
 		t = Action.TYPE_CLEAN_TILE
 	end
 	return Action.new(
@@ -43,8 +48,10 @@ Action.reverse = function(action)
 		action.layerId, 
 		action.posX, 
 		action.posY, 
-		action.tileTag, 
-		action.tileName
+		{
+			tileTag = tag,
+			tileName = name
+		}
 	)
 end
 
@@ -71,7 +78,12 @@ Action.redo = function()
 	Action.exec(Action.list[Action.currentIdx])
 end
 
-Action.new = function(type, world, layerId, posX, posY, tileTag, tileName)
+Action.new = function(type, world, layerId, posX, posY, options)
+	local tileTag = options and options.tileTag or nil
+	local tileName = options and options.tileName or nil
+	local preTileTag = options and options.preTileTag or nil
+	local preTileName = options and options.preTileName or nil
+
 	local action = {}
 	action.type = type
 	action.world = world
@@ -80,6 +92,8 @@ Action.new = function(type, world, layerId, posX, posY, tileTag, tileName)
 	action.posY = posY
 	action.tileTag = tileTag
 	action.tileName = tileName
+	action.preTileTag = preTileTag
+	action.preTileName = preTileName
 	return action
 end
 
