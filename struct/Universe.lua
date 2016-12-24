@@ -1,6 +1,6 @@
 local GameConfig = require("GameConfig")
 
-local World = require("scenes.Editor.World")
+local World = require("struct.World")
 
 local Universe = {}
 

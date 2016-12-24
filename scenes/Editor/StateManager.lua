@@ -5,8 +5,8 @@ local json = require("json")
 local loadsave = require("util.loadsave")
 
 local TileSprite = require("sprites.TileSprite")
-local Universe = require("scenes.Editor.Universe")
-local World = require("scenes.Editor.World")
+local Universe = require("struct.Universe")
+local World = require("struct.World")
 
 local basePath = system.pathForFile("", system.DocumentsDirectory)
 

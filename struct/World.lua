@@ -1,6 +1,6 @@
 local GameConfig = require("GameConfig")
 
-local Layer = require("scenes.Editor.Layer")
+local Layer = require("struct.Layer")
 
 local World = {}
 

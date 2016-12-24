@@ -1,8 +1,8 @@
 local GameConfig = require("GameConfig")
 
 local TileInfo = require("TileInfo")
-local World = require("scenes.Editor.World")
-local Universe = require("scenes.Editor.Universe")
+local World = require("struct.World")
+local Universe = require("struct.Universe")
 
 local Preview = {}
 
