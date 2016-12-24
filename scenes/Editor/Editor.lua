@@ -7,8 +7,7 @@ local ViewControlBar = require("scenes.Editor.ViewControlBar")
 local StatusBar = require("scenes.Editor.StatusBar")
 
 local TileSprite = require("sprites.TileSprite")
---local TileBox = require("scenes.Editor.TileBox")
-local TileBox = require("scenes.Editor.TileBox2")
+local TileBox = require("scenes.Editor.TileBox")
 local TileBase = require("scenes.Editor.TileBase")
 local Cursor = require("ui.Cursor")
 local StateManager = require("scenes.Editor.StateManager")
@@ -88,7 +87,10 @@ function Editor:initiateCallback()
     -- tile select callback
     self.tileSelectCallback = function()
         local tag = self.tileBox.selectedTileTag
-        local name = self.tileBox.selectedTileName
+        local name = nil
+        if self.tileBox.selectedTileIdx then
+            name = self.tileBox.tiles[tag][self.tileBox.selectedTileIdx].sprite.name
+        end
         -- if still in move mode
         self.moveEndCallback()
 
@@ -119,7 +121,7 @@ function Editor:initiateCallback()
         -- paste tile
         if self.mode == Editor.MODE_TILE then
             local tag = self.tileBox.selectedTileTag
-            local name = self.tileBox.selectedTileName
+            local name = self.tileBox.tiles[tag][self.tileBox.selectedTileIdx].sprite.name
             local oldSprite = world[layerId].tiles[x][y].sprite
             if not oldSprite or (oldSprite and (oldSprite.tag ~= tag or oldSprite.name ~= name)) then
                 local action = Action.new(
@@ -132,9 +134,6 @@ function Editor:initiateCallback()
                     name
                 )
                 Action.todo(action)
-
-                --local tile = TileSprite.new("isotiles", name)
-                --world[layerId]:setTileAt(tile, x, y)
             end
             return true
         -- clean tile
